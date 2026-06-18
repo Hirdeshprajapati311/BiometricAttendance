@@ -1,14 +1,16 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+import config from "./config/config.js";
 import { connectDB } from "./config/db.js";
-dotenv.config();
+import authRouter from "./routes/auth.route.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 connectDB();
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.get("/api", authRouter);
+
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`);
 });
