@@ -13,7 +13,12 @@ export const navItems = [
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => {
+    if (path === "/admin" || path === "/employee" || path === "/") {
+      return pathname === "/admin" || pathname === "/employee" || pathname === "/"
+    }
+    return pathname === path
+  };
 
   return (
     <>
