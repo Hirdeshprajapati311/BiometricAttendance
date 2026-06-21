@@ -4,12 +4,24 @@ import { MessageSquareText } from 'lucide-react';
 import { ImHistory } from "react-icons/im";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LiaUserCogSolid } from "react-icons/lia";
+import { role } from "@/app/(dashboard)/page";
 
-export const navItems = [
+export const allNavItems = [
   { name: "Dashboard", icon: <RxDashboard size={22} />, path: "/" },
-  { name: "Messages", icon: <MessageSquareText size={22} />, path: "/messages" },
-  { name: "History", icon: <ImHistory size={22} />, path: "/history" }
-]
+  { name: "Leave requests", icon: <MessageSquareText size={22} />, path: "/leaverequest" },
+  { name: "History", icon: <ImHistory size={22} />, path: "/history" },
+  { name: "User & Access Management", icon: <LiaUserCogSolid size={22} />, path: "/useraccess", roles: ["admin"] }
+];
+
+const navItems = allNavItems.filter(item => {
+  if (item.roles) {
+    return item.roles.includes(role);
+  }
+  return true
+})
+
+
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -23,7 +35,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
+      <aside className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
         <div className="bg-white/90 backdrop-blur-lg shadow-lg rounded-t-2xl border-t border-gray-200">
           <div className="flex items-center justify-around py-2 px-4">
             {navItems.map((item, index) => {
@@ -51,15 +63,15 @@ const Sidebar = () => {
             })}
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Desktop Sidebar - Vertical */}
-      <div className={`
+      <aside className={`
         hidden md:flex z-40 bg-white absolute top-20 rounded-2xl shadow-sm 
         flex-col transition-all duration-300 ease-in-out w-16
-        h-48
+        py-4
       `}>
-        <div className="flex flex-col items-center justify-around h-full">
+        <div className="flex flex-col items-center justify-around gap-2 h-full">
           {navItems.map((item, index) => {
             const active = isActive(item.path);
             return (
@@ -83,7 +95,7 @@ const Sidebar = () => {
             );
           })}
         </div>
-      </div>
+      </aside>
     </>
   );
 }

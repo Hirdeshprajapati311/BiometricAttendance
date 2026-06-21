@@ -12,7 +12,7 @@ import { TrendingDown } from "lucide-react";
 import { Plus } from "lucide-react";
 import AttendanceGraph from "@/components/charts/AttendanceChart";
 import AttendanceBar from "@/components/charts/WeeklyChart";
-import AttendanceOverview from "@/components/AttendanceOverview";
+import AttendanceOverAdmin from "@/components/AttendanceOverAdmin";
 
 const cardData = [
   { id: 1, stats: 467, title: "Total Employees", smallIcon: <Plus size={9} />, largeIcon: <Users size={20} className="text-primary" />, content: "2 new employees added" },
@@ -25,7 +25,7 @@ const cardData = [
 
 const page = () => {
   return (
-    <div className="flex flex-col gap-4 md:gap-6 px-4 sm:px-6 md:px-18   xl:px-44 min-h-screen pb-8">
+    <div className="flex flex-col gap-4 md:gap-6 min-h-screen pb-8">
 
       {/* Upper Cards Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
@@ -65,7 +65,7 @@ const page = () => {
       {/* Attendance List Section - Placeholder for future content */}
       <div className="mt-4 md:mt-6">
         {/* Add your attendance list component here */}
-        <AttendanceOverview />
+        <AttendanceOverAdmin />
       </div>
     </div>
   )
