@@ -33,7 +33,7 @@ const data = [
 
 const page = () => {
   return (
-    <div className="flex flex-col gap-4 md:gap-6 px-4 sm:px-6 md:px-18  xl:px-44 min-h-screen pb-8">
+    <div className="flex flex-col gap-4 md:gap-6 min-h-screen pb-8">
 
       {/* Upper Cards Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">

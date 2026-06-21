@@ -6,11 +6,13 @@ import { Search } from "lucide-react";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import NotificationPannel from "./NotificationPannel";
+import CalenderPannel from "./CalenderPannel";
 
 const Header = () => {
 
 
   const [isNotificationPannelOpen, setIsNotificationPannelOpen] = useState(false)
+  const [isCalenderPannelOpen, setIsCalenderPannelOpen] = useState(false)
 
 
 
@@ -37,9 +39,9 @@ const Header = () => {
 
           {/* calendar, notification & profile */}
           <div className="flex flex-row items-center gap-4">
-            <div className="bg-blue-accent border border-bg-secondary-blue rounded-full p-1 md:p-2">
+            <button onClick={() => setIsCalenderPannelOpen((prev) => !prev)} className="bg-blue-accent border border-bg-secondary-blue rounded-full p-1 md:p-2">
               <IoCalendarOutline size={20} className="text-bg-secondary-blue   cursor-pointer" />
-            </div>
+            </button>
             <button onClick={() => setIsNotificationPannelOpen(prev => !prev)} className="bg-blue-accent border border-bg-secondary-blue rounded-full p-1 md:p-2">
               <Bell size={20} className="text-bg-secondary-blue cursor-pointer " />
             </button>
@@ -59,7 +61,13 @@ const Header = () => {
 
       </div >
 
-      {isNotificationPannelOpen && <NotificationPannel isNotificationPannelOpen={isNotificationPannelOpen} setIsNotificationPannelOpen={setIsNotificationPannelOpen} />}
+      {isNotificationPannelOpen && <NotificationPannel onClose={() => setIsNotificationPannelOpen(false)} />}
+
+      {
+        isCalenderPannelOpen && <CalenderPannel onClose={() => setIsCalenderPannelOpen(false)} />
+      }
+
+
     </>
   );
 }

@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/components/Sidebar";
+import { allNavItems } from "@/components/Sidebar";
 import { IoGitPullRequest } from "react-icons/io5";
 import { useState } from "react";
 import LeaveRequestPopUp from "@/components/popups/LeaveRequestPopUp";
@@ -16,7 +16,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
 
   const pathname = usePathname();
-  const activeItem = navItems.find(item => {
+  const activeItem = allNavItems.find(item => {
     if (item.path === "/admin" || item.path === "/employee" || item.path === "/") {
       return pathname === "/admin" || pathname === "/employee" || pathname === "/"
     }
@@ -48,7 +48,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
 
         </div>
-        <main className="flex-1 overflow-y-auto p-6 bg-background">
+        <main className="flex-1 overflow-y-auto py-6 px-6 sm:px-30 md:px-28 xl:px-52 bg-background">
           {children}
         </main>
 
