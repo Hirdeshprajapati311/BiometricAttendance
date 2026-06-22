@@ -5,7 +5,7 @@ const page = () => {
   return (
     <div>
       <div className="relative w-screen h-screen overflow-hidden">
-        <Image src="/arnifilogo.png" alt="Arnifi Logo" height={100} className="absolute z-10 top-5 left-5 rounded-2xl" />
+        <Image src="/arnifilogo.png" alt="Arnifi Logo" height={100} width={100} className="absolute z-10 top-5 left-5 rounded-2xl" />
         <Image src="/newLogin.png" alt="Login Background" fill className="object-cover" priority />
 
 
