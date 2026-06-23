@@ -5,7 +5,7 @@ import { ImHistory } from "react-icons/im";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LiaUserCogSolid } from "react-icons/lia";
-import { role } from "@/app/(dashboard)/page";
+import { useSelector } from "react-redux";
 
 export const allNavItems = [
   { name: "Dashboard", icon: <RxDashboard size={22} />, path: "/" },
@@ -14,17 +14,23 @@ export const allNavItems = [
   { name: "User & Access Management", icon: <LiaUserCogSolid size={22} />, path: "/useraccess", roles: ["admin"] }
 ];
 
-const navItems = allNavItems.filter(item => {
-  if (item.roles) {
-    return item.roles.includes(role);
-  }
-  return true
-})
+
 
 
 
 const Sidebar = () => {
   const pathname = usePathname();
+
+  const user = useSelector((state: any) => state.auth.user)
+
+
+  const navItems = allNavItems.filter(item => {
+    if (item.roles) {
+      return item.roles.includes(user?.role);
+    }
+    return true
+  })
+
   const isActive = (path: string) => {
     if (path === "/admin" || path === "/employee" || path === "/") {
       return pathname === "/admin" || pathname === "/employee" || pathname === "/"

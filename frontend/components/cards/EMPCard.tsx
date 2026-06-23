@@ -1,8 +1,14 @@
+"use client"
 import { RxAvatar } from 'react-icons/rx';
 import { IoIosWarning } from "react-icons/io";
-import { role } from '@/app/(dashboard)/page';
+import { useSelector } from 'react-redux';
 
 const EMPCard = () => {
+  const user = useSelector((state: any) => state.auth.user)
+
+  if (!user) {
+    return null;
+  }
   return (
     <div className='p-4 gap-2 font-lexend text-xs bg-white rounded-lg flex flex-col border border-gray-200'>
 
@@ -15,7 +21,7 @@ const EMPCard = () => {
         </div>
       </div>
 
-      {role === "admin" && (
+      {user.role === "admin" && (
         <div className='flex flex-row gap-2'>
           <label className='text-gray-600' htmlFor="leaveType">Leave Type:</label>
           <span className='text-gray-700'>Casual Leave</span>
@@ -36,7 +42,7 @@ const EMPCard = () => {
         </div>
       </div>
 
-      {role === "admin" && (
+      {user.role === "admin" && (
         <div className='flex flex-row '>
           <label className='text-gray-600' htmlFor="">Snippet:</label>
           <p className='text-gray-600 truncate'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis, commodi. Alias pariatur ratione magni, est facere doloribus asperiores mollitia molestias, totam nulla et.</p>
@@ -45,7 +51,7 @@ const EMPCard = () => {
       )}
 
 
-      {role === "employee" && (
+      {user.role === "employee" && (
         <div className='flex flex-row gap-2 bg-amber-100 items-center border border-amber-500 rounded-lg px-3 p-1'>
           <div className='text-amber-500'><IoIosWarning size={15} /></div>
           Awaiting Approval

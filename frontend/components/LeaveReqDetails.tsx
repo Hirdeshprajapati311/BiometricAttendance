@@ -1,9 +1,14 @@
+"use client"
 import { RxAvatar } from 'react-icons/rx';
 import { FaCircleCheck } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa";
-import { role } from '@/app/(dashboard)/page';
+import { useSelector } from 'react-redux';
 
 const LeaveReqDetails = () => {
+  const user = useSelector((state: any) => state.auth.user)
+  if (!user) {
+    return null;
+  }
   return (
     <div className='w-full bg-white font-lexend text-sm shadow-lg rounded-lg'>
 
@@ -115,7 +120,7 @@ const LeaveReqDetails = () => {
 
 
 
-        {role === "admin" && (
+        {user.role === "admin" && (
           <>
             <input type="text" className='text-gray-500 rounded-lg bg-gray-100 border border-gray-300 p-3 w-full' placeholder='Comments...' />
 
@@ -129,7 +134,7 @@ const LeaveReqDetails = () => {
           </>
         )}
 
-        {role === "employee" && (
+        {user.role === "employee" && (
           <div className='px-6 flex w-full flex-row justify-end py-4'>
             <button className="p-2  rounded-lg text-primary border border-primary bg-blue-100">Withdraw Request</button>
           </div>

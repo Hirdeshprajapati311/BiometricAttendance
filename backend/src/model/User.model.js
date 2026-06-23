@@ -29,13 +29,16 @@ const UserSchema = mongoose.Schema(
     role: {
       type: String,
       enum: ["admin", "employee"],
-      default: "admin",
+      default: "employee",
       required: true,
     },
 
+    isRootAdmin: { type: Boolean, default: false },
     empId: { type: String, unique: true, sparse: true },
+    orgianzationName: { type: String, required: true },
     designation: { type: String },
     department: { type: String },
+    avatar: { type: String, default: null },
     leaveBalance: {
       casual: { total: Number, used: Number },
       sick: { total: Number, used: Number },
@@ -50,5 +53,5 @@ const UserSchema = mongoose.Schema(
   },
 );
 
-const userModel = mongoose.model("user", UserSchema);
-export default userModel;
+const User = mongoose.model("User", UserSchema);
+export default User;
