@@ -12,9 +12,11 @@ const page = () => {
 
       <div className="relative w-full h-full z-10 items-center flex justify-center font-serif">
         <div className="lg:w-2/5 xl:w-1/4 border border-gray-200 flex flex-col justify-center p-6  py-8 bg-white gap-4 rounded-sm shadow-lg">
+          <p className="w-full flex items-center justify-center">Register Organization</p>
 
           <input type="text" placeholder="Full Name" className="input" />
           <input type="text" placeholder="Company Email" className="input" />
+          <input className="input" type="text" placeholder="Organization Name" />
 
           <input type="text" placeholder="Create Password" className="input" />
 

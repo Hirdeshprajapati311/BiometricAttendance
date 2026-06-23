@@ -7,12 +7,18 @@ import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import NotificationPannel from "./NotificationPannel";
 import CalenderPannel from "./CalenderPannel";
+import { useSelector } from "react-redux";
 
 const Header = () => {
 
 
   const [isNotificationPannelOpen, setIsNotificationPannelOpen] = useState(false)
   const [isCalenderPannelOpen, setIsCalenderPannelOpen] = useState(false)
+
+  const user = useSelector((state: any) => state.auth.user)
+  if (!user) {
+    return null;
+  }
 
 
 
@@ -47,8 +53,8 @@ const Header = () => {
             </button>
             <FaUserCircle size={30} className="text-gray-500 cursor-pointer" />
             <div>
-              <h1 className=" text-xs md:text-sm font-medium">Admin</h1>
-              <p className="text-[0.6rem] md:text-xs text-gray-500">admin@domain.in</p>
+              <h1 className=" text-xs md:text-sm font-medium">{user.name}</h1>
+              <p className="text-[0.6rem] md:text-xs text-gray-500">{user.email}</p>
             </div>
           </div>
 

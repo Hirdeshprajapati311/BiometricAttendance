@@ -1,11 +1,27 @@
-import { redirect } from "next/navigation"
+"use client"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 
 
-export const role = "admin" as "admin" | "employee"
 
 
 export default function Home() {
-  if (role === "admin") redirect("/admin");
-  if (role === "employee") redirect("/employee")
+
+  const router = useRouter();
+  const user = useSelector((state: any) => state.auth.user)
+
+
+  useEffect(() => {
+    if (!user) {
+      router.replace("/login")
+      return;
+    }
+    if (user.role === "admin") {
+      router.replace("/admin");
+    } else {
+      router.replace("/employee")
+    }
+  })
 }
