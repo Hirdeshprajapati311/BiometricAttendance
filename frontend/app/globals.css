@@ -134,7 +134,7 @@
   }
 
   .input {
-    @apply p-2 rounded border-gray-300  outline-primary border-2  placeholder:sm:text-sm placeholder:md:text-base;
+    @apply p-2 rounded w-full border-gray-300  outline-primary border-2  placeholder:sm:text-sm placeholder:md:text-base;
   }
 }
 

@@ -11,7 +11,11 @@ const leaveTypes = [
   "Half Leave"
 ]
 
-const LeaveRequestPopUp = ({ onClose }: { onClose: () => void }) => {
+interface LRPopUPProps {
+  onClose: () => void
+}
+
+const LeaveRequestPopUp = ({ onClose }: LRPopUPProps) => {
   return (
 
     <div className='fixed inset-0 z-10 absolute items-center justify-center backdrop-blur-xs bg-primary/20 flex'>

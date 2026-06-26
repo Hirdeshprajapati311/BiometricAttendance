@@ -8,19 +8,10 @@ export const loginApi = async (data: { email: string; password: string }) => {
 
 export const registerApi = async (data: {
   name: string;
+  email: string;
   password: string;
   organizationName: string;
 }) => {
   const response = await axiosInstance.post(ApiRoutes.AUTH.REGISTER, data);
-  return response.data;
-};
-
-export const logoutApi = async () => {
-  const response = await axiosInstance.post(ApiRoutes.AUTH.LOGOUT);
-  return response.data;
-};
-
-export const refreshTokenApi = async () => {
-  const response = await axiosInstance.post(ApiRoutes.AUTH.REFRESH_TOKEN);
   return response.data;
 };

@@ -3,6 +3,7 @@ import { setCredentials } from "@/store/authSlice";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
 export const useLogin = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const useLogin = () => {
       }
     },
     onError: (error) => {
+      toast.error(error.message);
       console.log(error);
     },
   });
