@@ -5,17 +5,36 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { allNavItems } from "@/components/Sidebar";
 import { IoGitPullRequest } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LeaveRequestPopUp from "@/components/popups/LeaveRequestPopUp";
+import { useSelector } from "react-redux";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
 
-
   const [isPopUpOpen, setIsPopUpOpen] = useState(false)
-
-
   const pathname = usePathname();
+  const { isAuthenticated } = useSelector((state: any) => state.auth)
+  const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsChecking(false), 500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    if (!isChecking && !isAuthenticated) {
+      window.location.href = "/login"
+    }
+  }, [isAuthenticated, isChecking])
+
+  if (isChecking) return null
+  if (!isAuthenticated) return null
+
+
+
+
+
   const activeItem = allNavItems.find(item => {
     if (item.path === "/admin" || item.path === "/employee" || item.path === "/") {
       return pathname === "/admin" || pathname === "/employee" || pathname === "/"

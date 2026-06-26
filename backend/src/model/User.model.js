@@ -35,7 +35,8 @@ const UserSchema = mongoose.Schema(
 
     isRootAdmin: { type: Boolean, default: false },
     empId: { type: String, unique: true, sparse: true },
-    orgianzationName: { type: String, required: true },
+    orgianzationName: { type: String, required: false },
+    phone: { type: String },
     designation: { type: String },
     department: { type: String },
     avatar: { type: String, default: null },
