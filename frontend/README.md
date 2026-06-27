@@ -20,3 +20,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - Currently supports single organization per deployment
 - Multi-tenancy support planned for future release
+- Roles & Permissions is planned for future release
+  
