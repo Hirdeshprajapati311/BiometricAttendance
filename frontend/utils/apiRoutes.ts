@@ -1,19 +1,19 @@
 export const ApiRoutes = {
   AUTH: {
-    LOGIN: "/api/auth/login",
-    REGISTER: "/api/auth/register",
-    LOGOUT: "/api/auth/logout",
-    REFRESH_TOKEN: "/api/auth/refresh-token",
+    LOGIN: "/api/v1/auth/login",
+    REGISTER: "/api/v1/auth/register",
+    LOGOUT: "/api/v1/auth/logout",
+    REFRESH_TOKEN: "/api/v1/auth/refresh-token",
   },
 
   USER: {
-    CREATE_EMP: "/api/users/create",
-    GET_ALL: "/api/users/all",
+    CREATE_EMP: "/api/v1/users/ create",
+    GET_ALL: "/api/v1/users/all",
     UPDATE: (userId: string) => `/api/users/${userId}`,
   },
 
   ATTENDANCE: {
-    ADMIN: "/api/attendance",
-    EMPLOYEE: "/api/attendance/me",
+    ADMIN: "/api/v1/attendance",
+    EMPLOYEE: "/api/v1/attendance/me",
   },
 };

@@ -1,8 +1,12 @@
 "use client"
+import { LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ImSun } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 const DateCard = () => {
+
+  const { role } = useSelector((state: any) => state.auth.user)
 
 
   const [formattedTime, setFormattedTime] = useState("")
@@ -49,11 +53,11 @@ const DateCard = () => {
   }, [])
 
   return (
-    <div className="bg-white hover:scale-105 transition-all duration-300 flex flex-1  flex-col  gap-4 md:gap-10 rounded-lg shadow-md p-4 px-6 w-full  lg:w-52">
+    <div className={`bg-white hover:scale-105 transition-all duration-300 flex flex-1  flex-col  gap-4 rounded-lg shadow-md p-4 px-6 w-full  lg:w-52 ${role === "employee" ? "md:gap-4" : "md:gap-10"}`}>
 
 
       {/* Time content */}
-      <div className="flex flex-row mt-2 md:mt-6 items-center  gap-2">
+      <div className={`flex flex-row mt-2  items-center  gap-2 ${role === "employee" ? "md:mt-4" : "md:mt-6"}`}>
         <ImSun size={30} className="text-gray-400" />
         <div className="flex flex-col">
           <h3 className="text-lg sm:text-xl font-lexend text-gray-400">{formattedTime || "Loading"}</h3>
@@ -70,6 +74,16 @@ const DateCard = () => {
         <p >{formattedDate}</p>
 
       </div>
+
+
+      {role === "employee" && (
+        <div className="flex font-lexend justify-between items-center flex-row">
+          <p className="text-[8px]">Yor are not punched In</p>
+          <div className="h-full w-1 bg-gray-300" />
+          <button className="flex flex-row gap-2 bg-primary text-xs p-1 rounded-lg text-white">PUNCH IN <LogOut /></button>
+
+        </div>
+      )}
 
 
       {/* Attendance button */}

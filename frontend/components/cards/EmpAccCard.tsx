@@ -3,7 +3,7 @@ import { RxAvatar } from 'react-icons/rx';
 
 
 type EmpProps = {
-  user: { name: string, designation: string, department: string, avatar: string, role: string };
+  user: { name: string, designation: string, department: string, avatar?: string, role: string };
   isSelected: boolean;
   onSelect: (user: any) => void
 }

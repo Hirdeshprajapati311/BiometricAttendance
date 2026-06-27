@@ -149,6 +149,8 @@ export async function refreshToken(req, res) {
       user: {
         _id: decoded.userId,
         role: decoded.role,
+        name: decoded.name,
+        emai: decoded.email,
       },
     });
   } catch (error) {
