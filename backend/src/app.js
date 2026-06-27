@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { connectDB } from "./db.js";
 import cookieParser from "cookie-parser";
 import adminRouter from "./routes/admin.route.js";
+import { adminOnly, protect } from "./middleware/auth.middleware.js";
 
 const app = express();
 app.use(express.json());
@@ -19,7 +20,7 @@ app.use(
 app.use(morgan("dev"));
 
 app.use("/api/auth", authRouter);
-app.use("/api/users/", adminRouter);
+app.use("/api/users/", protect, adminOnly, adminRouter);
 
 const startServer = async () => {
   await connectDB();

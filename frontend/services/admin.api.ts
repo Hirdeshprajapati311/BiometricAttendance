@@ -21,6 +21,8 @@ type Employee = {
   role: string;
   department: string;
   designation: string;
+  email: string;
+  phone: string;
 };
 
 export type GetAllEmployeesResponse = {
@@ -28,7 +30,24 @@ export type GetAllEmployeesResponse = {
   users: Employee[];
 };
 
-export const getAllEmployees = async (): Promise<GetAllEmployeesResponse> => {
-  const { data } = await axiosInstance.get(ApiRoutes.USER.GET_ALL);
-  return data;
+export const getAllEmployeesApi =
+  async (): Promise<GetAllEmployeesResponse> => {
+    const { data } = await axiosInstance.get(ApiRoutes.USER.GET_ALL);
+    return data;
+  };
+
+export interface UpdateUserTypes {
+  name?: string;
+  role?: string;
+  email?: string;
+  password?: string;
+  department?: string;
+  phone?: string;
+  designation?: string;
+  avatar?: string;
+}
+
+export const updateApi = async (id: string, data: UpdateUserTypes) => {
+  const response = await axiosInstance.patch(ApiRoutes.USER.UPDATE(id), data);
+  return response.data;
 };

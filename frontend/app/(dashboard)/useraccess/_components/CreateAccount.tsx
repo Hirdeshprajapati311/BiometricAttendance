@@ -1,27 +1,44 @@
 "use client"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { useCreateUser } from "@/hooks/userCreateUser";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { CreateAccountData, createAccountSchema } from '@/validators/auth.validation';
 
-const CreateAccount = () => {
+interface CreateAccountProps {
+  selectedUser?: {
+    _id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    designation: string;
+    department: string;
+    role: string;
+  } | null;
+  isCreating?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void
+}
+
+const CreateAccount = ({ selectedUser, isCreating, onSuccess, onCancel }: CreateAccountProps) => {
   const department = ["HR", "Engineering", "Marketing", "Finance", "Operations"];
   const designation = ["HR Manager", "Lead Developer", "Finance Director", "Operations Lead"];
   const roles = ["admin", "employee"];
   const [isOn, setIsOn] = useState(false);
 
-  const { mutate: createUser, isPending } = useCreateUser();
+  const { mutate: createUser, isPending: isCreatingPending, isSuccess: isCreateSuccess } = useCreateUser();
+  const { mutate: updateUser, isPending: isUpdatingPending, isSuccess: isUpdateSuccess } = useUpdateUser();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    reset
+    reset,
+    setValue
   } = useForm<CreateAccountData>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
@@ -33,24 +50,62 @@ const CreateAccount = () => {
       department: "",
       designation: ""
     },
-    mode: "onChange" // Validate on every change
+    mode: "onChange"
   });
 
   const role = watch('role');
 
+  useEffect(() => {
+    if (isCreateSuccess || isUpdateSuccess) {
+      reset();
+      if (onSuccess) {
+        onSuccess
+      }
+    }
+  }, [isCreateSuccess, isUpdateSuccess, reset, onSuccess])
+
+  // ✅ Populate form when user is selected
+  useEffect(() => {
+    if (selectedUser) {
+      setValue('name', selectedUser.name);
+      setValue('email', selectedUser.email);
+      setValue('phone', selectedUser.phone || '');
+      setValue('role', selectedUser.role);
+      setValue('department', selectedUser.department);
+      setValue('designation', selectedUser.designation);
+      // Don't set password for updates
+    } else if (isCreating) {
+      reset(); // Reset form for new user
+    }
+  }, [selectedUser, isCreating, setValue, reset]);
+
   const onSubmit = (data: CreateAccountData) => {
-    createUser(data);
+    if (selectedUser) {
+      // ✅ Update existing user
+      const { password, ...updateData } = data; // Remove password if not needed
+      updateUser({
+        id: selectedUser._id,
+        data: updateData
+      });
+    } else {
+      // ✅ Create new user
+      createUser(data);
+    }
   };
 
   const toggle = () => {
     setIsOn(!isOn);
   };
 
+  const isPending = selectedUser ? isUpdatingPending : isCreatingPending;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='bg-white h-[calc(100vh-100px)] w-full rounded-lg flex shadow-lg flex-col justify-between'>
       <div className='w-full font-lexend text-sm p-6 flex flex-col'>
         <div>
-          <span className='font-semibold text-lg'>Create New Admin Account</span>
+          <span className='font-semibold text-lg'>
+            {selectedUser ? 'Update Account' : 'Create New Account'}
+          </span>
 
           <div className='flex flex-col w-full scroll-y-auto custom-scrollbar gap-3'>
             <span className='font-semibold text-lg'>Personal Info</span>
@@ -98,20 +153,22 @@ const CreateAccount = () => {
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <input
-                {...register('password')}
-                autoComplete="new-password"
-                type="password"
-                placeholder='Password *'
-                className={`bg-gray-100 placeholder:text-gray-400 border w-full p-2 rounded-lg ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-400'
-                  }`}
-              />
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-              )}
-            </div>
+            {/* Password - Only show for new users */}
+            {!selectedUser && (
+              <div>
+                <input
+                  {...register('password')}
+                  autoComplete="new-password"
+                  type="password"
+                  placeholder='Password *'
+                  className={`bg-gray-100 placeholder:text-gray-400 border w-full p-2 rounded-lg ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-400'
+                    }`}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                )}
+              </div>
+            )}
 
             <span className='font-semibold text-lg'>Role & Permissions</span>
 
@@ -203,10 +260,10 @@ const CreateAccount = () => {
       <div className='grid grid-cols-2 rounded-b-lg gap-4 px-6 py-4 bg-blue-50'>
         <button
           type="button"
-          onClick={() => reset()}
+          onClick={onCancel}
           className='rounded-lg bg-gray-400 text-white cursor-pointer p-2 hover:bg-gray-500 transition-colors'
         >
-          Cancel Creation
+          {selectedUser ? 'Cancel' : 'Cancel Creation'}
         </button>
         <button
           type="submit"
@@ -214,7 +271,13 @@ const CreateAccount = () => {
           className='text-white bg-primary rounded-lg cursor-pointer items-center justify-center flex p-2 hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
         >
           <Check />&nbsp;
-          {isPending ? "Creating..." : `Finalize & Create ${role === "employee" ? "Employee" : "Admin"}`}
+          {isPending
+            ? (selectedUser ? "Updating..." : "Creating...")
+            : (selectedUser
+              ? `Update ${role === "employee" ? "Employee" : "Admin"}`
+              : `Finalize & Create ${role === "employee" ? "Employee" : "Admin"}`
+            )
+          }
         </button>
       </div>
     </form>

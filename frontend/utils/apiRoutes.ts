@@ -9,6 +9,7 @@ export const ApiRoutes = {
   USER: {
     CREATE_EMP: "/api/users/create",
     GET_ALL: "/api/users/all",
+    UPDATE: (userId: string) => `/api/users/${userId}`,
   },
 
   ATTENDANCE: {
