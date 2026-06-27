@@ -70,7 +70,7 @@ export const createUser = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const users = await User.find({ isRootAdmin: false }).select(
-      "name avatar designation department role",
+      "name avatar designation department role email phone",
     );
     return res.status(200).json({
       success: "true",
@@ -80,6 +80,28 @@ export const getAll = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
+    });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updateEmployee = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server issue",
+      error: error.message,
     });
   }
 };
