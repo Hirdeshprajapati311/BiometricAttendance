@@ -19,8 +19,8 @@ app.use(
 );
 app.use(morgan("dev"));
 
-app.use("/api/auth", authRouter);
-app.use("/api/users/", protect, adminOnly, adminRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users/", protect, adminOnly, adminRouter);
 
 const startServer = async () => {
   await connectDB();

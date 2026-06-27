@@ -27,6 +27,7 @@ const Header = () => {
   const user = useSelector((state: any) => state.auth.user)
 
 
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -40,12 +41,12 @@ const Header = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [openProfile, setOpenProfile])
+  }, [openProfile])
 
 
 
   if (!user) {
-    return null;
+    return null
   }
 
 
@@ -80,7 +81,7 @@ const Header = () => {
               <FaUserCircle size={30} className="text-gray-500 cursor-pointer" />
 
               {openProfile && (
-                <div ref={modalRef} className="p-4 rounded-lg bg-white absolute top-8 flex items-center justify-center flex-col gap-4">
+                <div onClick={(e) => e.stopPropagation()} ref={modalRef} className="p-4 rounded-lg bg-white absolute top-8 flex items-center justify-center flex-col gap-4">
 
                   <div className="w-30 truncate md:w-36">
                     <h1 className=" text-xs md:text-sm font-medium">{user.name}</h1>

@@ -2,8 +2,9 @@
 import EmpAccCard from '@/components/cards/EmpAccCard';
 import CreateAccount from '@/app/(dashboard)/useraccess/_components/CreateAccount';
 import { useGetAllEmployees } from '@/hooks/useGetAllEMPs';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
 
 
 interface User {
@@ -22,7 +23,9 @@ const page = () => {
   const { data, isLoading, error, refetch } = useGetAllEmployees()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isCreating, setIsCreating] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("")
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   const handleSelectUser = (user: User) => {
     setSelectedUser(user);
@@ -45,6 +48,19 @@ const page = () => {
     refetch()
   }
 
+  const filteredUsers = useMemo(() => {
+    if (!data?.users) return [];
+
+    if (!debouncedSearchTerm.trim()) return data.users;
+
+    const searchLower = debouncedSearchTerm.toLowerCase().trim();
+    return data.users.filter((user: User) => {
+      return (
+        user.name?.toLowerCase().includes(searchLower) || user.email?.toLowerCase().includes(searchLower) || user.department?.toLowerCase().includes(searchLower) || user.designation?.toLowerCase().includes(searchLower) || user.role?.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [data?.users, debouncedSearchTerm])
+
 
   if (isLoading) return <p>Loading...</p>;
   return (
@@ -61,7 +77,24 @@ const page = () => {
         {/* Search */}
         <div className='gap-2 px-3 py-2 text-gray-400 border border-gray-300 bg-white rounded-lg flex flex-row'>
           <Search />
-          <input type="text" className='border-none placeholder:text-gray-400 w-full outline-none' placeholder='Search...' />
+          <input
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm} type="text" className='border-none placeholder:text-gray-400 w-full outline-none' placeholder='Search...'
+            autoFocus
+          />
+          {searchTerm && (
+            <button onClick={() => setSearchTerm("")}
+              type='button'
+              className='text-gray-400 hover:text-gray600 transition-colors'
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+
+        <div className="text-xs text-gray-500">
+          {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'} found
         </div>
 
         {/* Card */}
@@ -72,9 +105,17 @@ const page = () => {
           }}
           className='flex-1 overflow-y-auto space-y-3 custom-scrollbar scrollbar-hide'>
 
-          {data?.users.map((user) => (
-            <EmpAccCard key={user._id} user={user} isSelected={selectedUser?._id === user._id} onSelect={handleSelectUser} />
-          ))}
+
+
+
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user: User) => (
+              <EmpAccCard key={user._id} user={user} isSelected={selectedUser?._id === user._id} onSelect={handleSelectUser} />
+            ))
+          ) : (<div className="text-center text-gray-500 py-8">
+            <p>No users found</p>
+            <p className="text-xs mt-1">Try adjusting your search</p>
+          </div>)}
 
         </div>
 
