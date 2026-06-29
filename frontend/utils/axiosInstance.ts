@@ -69,19 +69,19 @@ axiosInstance.interceptors.response.use(
         console.log("🔄 Access token expired — attempting refresh...");
         const response = await axiosInstance.post(ApiRoutes.AUTH.REFRESH_TOKEN);
         console.log("✅ Token refreshed successfully");
-        const newAccessToken = response.data.accessToken;
+        const { accessToken, user } = response.data;
 
         store.dispatch(
           setCredentials({
-            accessToken: newAccessToken,
-            user: store.getState().auth.user,
+            accessToken,
+            user,
           }),
         );
 
-        processQueue(null, newAccessToken);
+        processQueue(null, accessToken);
         isRefreshing = false;
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);

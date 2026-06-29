@@ -2,12 +2,13 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { allNavItems } from "@/components/Sidebar";
 import { IoGitPullRequest } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import LeaveRequestPopUp from "@/components/popups/LeaveRequestPopUp";
 import { useSelector } from "react-redux";
+import { ArrowLeft } from "lucide-react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
@@ -16,6 +17,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { isAuthenticated } = useSelector((state: any) => state.auth)
   const [isChecking, setIsChecking] = useState(true)
+  const router = useRouter()
+
 
   useEffect(() => {
     const timer = setTimeout(() => setIsChecking(false), 500)
@@ -55,11 +58,28 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
         <div className="flex items-center justify-between relative sm:px-30 w-full  md:px-28 xl:px-52 pt-4 md:pt-6 gap-1 px-6
         ">
-          <div className="flex flex-row items-center justify-center gap-1">
-            {currentPageName} <Image src="/triangle.png" alt="Triangle" width={11} height={11} />
+          {pathname === "/employee/attendance" ? (<button onClick={() => router.back()} className="flex flex-row gap-2 items-center cursor-pointer"><ArrowLeft size={18} /> Back</button>) : (
+            <div className="flex flex-row items-center justify-center gap-1">
+              {currentPageName} <Image src="/triangle.png" alt="Triangle" width={11} height={11} /></div>
+          )}
 
-          </div>
-          {pathname === "/employee" && (<button onClick={() => setIsPopUpOpen((prev) => !prev)} className="p-2 font-lexend text-xs md:text-sm flex flex-row items-center justify-center rounded-lg cursor-pointer  bg-primary text-white"><IoGitPullRequest />&nbsp; Request for leave</button>)}
+
+          {pathname === "/employee/attendance" ? (
+            <button
+              onClick={() => router.push("/history")}
+              className="p-2 font-lexend text-xs md:text-sm rounded-lg bg-primary text-white cursor-pointer"
+            >
+              Back to Overview
+            </button>
+          ) : pathname === "/employee" ? (
+            <button
+              onClick={() => setIsPopUpOpen((prev) => !prev)}
+              className="p-2 font-lexend text-xs md:text-sm flex items-center justify-center rounded-lg bg-primary text-white cursor-pointer"
+            >
+              <IoGitPullRequest />
+              &nbsp; Request for leave
+            </button>
+          ) : null}
 
           {isPopUpOpen && (
             <LeaveRequestPopUp onClose={() => setIsPopUpOpen(false)} />
@@ -74,7 +94,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       </div>
 
-    </div>
+    </div >
   );
 }
 

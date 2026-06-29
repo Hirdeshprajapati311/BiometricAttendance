@@ -14,9 +14,13 @@ import AttendanceGraph from "@/components/charts/AttendanceChart";
 import AttendanceBar from "@/components/charts/WeeklyChart";
 import EmployeeCard from "@/components/cards/EmployeeCard";
 import AttendanceOverview from "@/components/AttendanceOverview";
+import { useGetLeaveBalance } from "@/hooks/useGetLeaveBalance";
 
 
 const data = [
+
+
+
   { label: "Casual leave", used: 4, total: 7 },
   { label: "Sick leave", used: 4, total: 7 },
   { label: "Earned leave", used: 4, total: 7 },
@@ -32,6 +36,11 @@ const data = [
 
 
 const page = () => {
+
+
+  const { data: leaveReqData } = useGetLeaveBalance()
+
+
   return (
     <div className="flex flex-col gap-4 md:gap-6 min-h-screen pb-8">
 
@@ -46,9 +55,12 @@ const page = () => {
         {/* Regular Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 sm:col-span-2 lg:col-span-3 order-2 lg:order-2">
           {/* EmployeeCard */}
-          {data.map((d, i) => (
-            <EmployeeCard key={i} used={d.used} total={d.total} label={d.label} />
+
+          {leaveReqData?.leaveBalance && Object.entries(leaveReqData.leaveBalance).map(([key, value]: any) => (
+            <EmployeeCard key={key} used={value.used} total={value.total} label={key} />
           ))}
+
+
         </div>
       </div>
 
