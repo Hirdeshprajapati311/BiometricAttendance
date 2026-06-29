@@ -50,6 +50,8 @@ const Header = () => {
   }
 
 
+  console.log("Header user:", user);
+
   return (
     <>
       <div className="h-16 relative rounded-2xl bg-white shadow-xl flex flex-row justify-between items-center pl-4 pr-2 py-2 px-6">

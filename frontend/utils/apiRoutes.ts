@@ -15,5 +15,12 @@ export const ApiRoutes = {
   ATTENDANCE: {
     ADMIN: "/api/v1/attendance",
     EMPLOYEE: "/api/v1/attendance/me",
+    CHECK_IN: "/api/v1/attendance/checkin",
+    CHECKED_IN: "/api/v1/attendance/status",
+    CHECK_OUT: "/api/v1/attendance/checkout",
+  },
+
+  LEAVE_REQ: {
+    BALANCE: "/api/v1/leave-request/balance",
   },
 };

@@ -134,8 +134,17 @@ export async function refreshToken(req, res) {
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     const newAccessToken = jwt.sign(
-      { userId: decoded.userId, role: decoded.role },
+      { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       {
         expiresIn: "15m",
@@ -147,10 +156,10 @@ export async function refreshToken(req, res) {
       accessToken: newAccessToken,
       message: "User verified",
       user: {
-        _id: decoded.userId,
-        role: decoded.role,
-        name: decoded.name,
-        emai: decoded.email,
+        _id: user.userId,
+        role: user.role,
+        name: user.name,
+        email: user.email,
       },
     });
   } catch (error) {

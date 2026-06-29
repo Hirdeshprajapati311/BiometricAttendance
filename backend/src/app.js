@@ -1,12 +1,17 @@
 import express from "express";
 import cors from "cors";
 import config from "./config/config.js";
-import authRouter from "./routes/auth.route.js";
 import morgan from "morgan";
 import { connectDB } from "./db.js";
 import cookieParser from "cookie-parser";
-import adminRouter from "./routes/admin.route.js";
 import { adminOnly, protect } from "./middleware/auth.middleware.js";
+
+import {
+  authRouter,
+  adminRouter,
+  leaveRouter,
+  attendanceRouter,
+} from "./routes/routeExports.js";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +26,8 @@ app.use(morgan("dev"));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users/", protect, adminOnly, adminRouter);
+app.use("/api/v1/leave-request", protect, leaveRouter);
+app.use("/api/v1/attendance", protect, attendanceRouter);
 
 const startServer = async () => {
   await connectDB();
