@@ -66,13 +66,11 @@ const page = () => {
 
       {/* Charts Section */}
       <div className="mt-4 md:mt-6">
-        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 md:gap-6">
-          <div className="lg:col-span-2 w-full overflow-x-auto">
+        <div className="flex flex-col  gap-4 md:gap-6">
+          <div className=" w-full overflow-x-auto">
             <AttendanceGraph />
           </div>
-          <div className="w-full overflow-x-auto">
-            <AttendanceBar />
-          </div>
+
         </div>
       </div>
 

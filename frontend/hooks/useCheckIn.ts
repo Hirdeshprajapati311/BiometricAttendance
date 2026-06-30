@@ -12,8 +12,9 @@ export const useCheckIn = () => {
       toast.success(data.message);
 
       queryClient.invalidateQueries({
-        queryKey: ["attendance"],
+        queryKey: ["checkedIn"],
       });
+      queryClient.invalidateQueries({ queryKey: ["attendance"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Something went wrong");
