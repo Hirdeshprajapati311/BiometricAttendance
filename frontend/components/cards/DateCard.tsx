@@ -1,6 +1,7 @@
 "use client"
 import { useCheckedIn } from "@/hooks/useCheckedIn";
 import { useCheckIn } from "@/hooks/useCheckIn";
+import { useCheckOut } from "@/hooks/useCheckOut";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,7 +17,8 @@ const DateCard = () => {
   const router = useRouter()
 
   const { mutate: checkIn, isPending } = useCheckIn();
-  const { data: checkinStatus } = useCheckedIn();
+  const { data: isCheckedIn } = useCheckedIn();
+  const { mutate: checkOut, isPending: pendingCheckOut } = useCheckOut()
 
   // Date Formating
 
@@ -100,14 +102,14 @@ const DateCard = () => {
           </div>) : (
             <>
               <div className="flex font-lexend justify-between items-center flex-row">
-                {checkinStatus?.checkedIn && !checkinStatus?.attendance.checkOut ? (<p
+                {isCheckedIn?.checkedIn && !isCheckedIn?.attendance.checkOut ? (<p
 
                   className="text-[8px] text-green-400">Yor are checked In</p>) : (<p className="text-[8px]">Yor are not checked In</p>)}
                 <div className="h-full w-1 bg-gray-500" />
-                {checkinStatus?.checkedIn && !checkinStatus?.attendance.checkOut ? (<button
-                  style={{ backgroundColor: "#22c559" }}
-                  className="flex flex-row cursor-pointer gap-2 bg-green-500 text-xs p-1 rounded-lg text-white">
-                  CHECK OUT<LogOut />
+                {isCheckedIn?.checkedIn && !isCheckedIn?.attendance.checkOut ? (<button disabled={pendingCheckOut} onClick={() => checkOut()}
+                  style={{ backgroundColor: "#6b7280" }}
+                  className="flex flex-row cursor-pointer gap-2 text-xs p-1 rounded-lg text-white">
+                  {pendingCheckOut ? "CHECKING OUT..." : "CHECK OUT"}<LogOut />
                 </button>) : (
                   <button disabled={isPending} onClick={() => checkIn()} className="flex flex-row cursor-pointer gap-2 bg-primary text-xs p-1 rounded-lg text-white">{isPending ? "CHECKING..." : "CHECK IN"} <LogOut /></button>
                 )}
