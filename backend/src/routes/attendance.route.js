@@ -11,4 +11,6 @@ attendanceRouter.patch("/checkout", attendanceController.checkOut);
 
 attendanceRouter.get("/status", attendanceController.checkedIn);
 
+attendanceRouter.get("/chart", attendanceController.getComparisonChart);
+
 export default attendanceRouter;

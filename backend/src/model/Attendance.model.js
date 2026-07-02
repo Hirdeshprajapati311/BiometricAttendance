@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const AttendanceSchema = mongoose.Schema(
+const AttendanceSchema = new mongoose.Schema(
   {
     employeeId: {
       type: mongoose.Schema.Types.ObjectId,

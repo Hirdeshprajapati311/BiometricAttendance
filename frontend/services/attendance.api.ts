@@ -27,12 +27,24 @@ export interface GetMyAttendanceResponse {
   pagination: Pagination;
 }
 
-export const getEmployeeAttendanceApi = async (
-  page: number,
-): Promise<GetMyAttendanceResponse> => {
-  const { data } = await axiosInstance.get(
-    `${ApiRoutes.ATTENDANCE.EMPLOYEE}?page=${page}`,
-  );
+export interface AttendanceFilter {
+  page: number;
+  status?: string;
+  date?: string;
+}
+
+export const getEmployeeAttendanceApi = async ({
+  page = 1,
+  status,
+  date,
+}: AttendanceFilter): Promise<GetMyAttendanceResponse> => {
+  const { data } = await axiosInstance.get(ApiRoutes.ATTENDANCE.EMPLOYEE, {
+    params: {
+      page,
+      status,
+      date,
+    },
+  });
   return data;
 };
 
@@ -48,5 +60,18 @@ export const checkedInApi = async () => {
 
 export const checkOutApi = async () => {
   const { data } = await axiosInstance.patch(ApiRoutes.ATTENDANCE.CHECK_OUT);
+  return data;
+};
+
+export interface Chart {
+  filter: string;
+}
+
+export const chartApi = async (filter: Chart["filter"]) => {
+  const { data } = await axiosInstance.get(ApiRoutes.ATTENDANCE.CHART, {
+    params: {
+      filter,
+    },
+  });
   return data;
 };

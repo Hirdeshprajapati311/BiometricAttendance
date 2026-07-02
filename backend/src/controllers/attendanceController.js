@@ -1,7 +1,7 @@
 import Attendance from "../model/Attendance.model.js";
 import User from "../model/User.model.js";
 import calculateWorkHours from "../utils/calculateWorkHours.js";
-
+import generateChart from "../utils/generateChart.js";
 /**
  * GET /api/v1/attendance/me
  */
@@ -9,14 +9,33 @@ import calculateWorkHours from "../utils/calculateWorkHours.js";
 export const getMyAttendance = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
+    const { status, date } = req.query;
     const limit = 8;
     const skip = (page - 1) * limit;
     const { userId } = req.user;
 
-    const total = await Attendance.countDocuments({ employeeId: userId });
-    const attendance = await Attendance.find({
+    const query = {
       employeeId: userId,
-    })
+    };
+    if (status && status !== "all") {
+      query.status = status;
+    }
+
+    if (date) {
+      const [year, month, day] = date.split("-").map(Number);
+
+      const startOfDay = new Date(year, month - 1, day);
+      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+      query.date = {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      };
+    }
+
+    const total = await Attendance.countDocuments(query);
+
+    const attendance = await Attendance.find(query)
       .populate("employeeId", "name empId")
       .sort({ date: -1 })
       .skip(skip)
@@ -138,9 +157,9 @@ export const checkOut = async (req, res) => {
       });
     }
 
-    const hourseWorked = (now - attendance.checkIn) / (1000 * 60 * 60);
+    const hoursWorked = (now - attendance.checkIn) / (1000 * 60 * 60);
 
-    if (hourseWorked < MIN_CHECKOUT_HOURS) {
+    if (hoursWorked < MIN_CHECKOUT_HOURS) {
       const remainingMs =
         attendance.checkIn.getTime() +
         MIN_CHECKOUT_HOURS * 60 * 60 * 1000 -
@@ -208,6 +227,55 @@ export const checkedIn = async (req, res) => {
       success: false,
       message: "Internal Server Error",
       error: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/v1/attendance/chart
+ */
+
+export const getComparisonChart = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { filter } = req.query;
+
+    let startDate = new Date();
+
+    switch (filter) {
+      case "daily":
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+      case "weekly":
+        startDate.setDate(startDate.getDate() - 49);
+        break;
+      case "monthly":
+        startDate.setDate(startDate.getDate() - 11);
+        break;
+      default:
+        return res.status(400).json({
+          success: false,
+          message: "Invalid filter",
+        });
+    }
+
+    const attendance = await Attendance.find({
+      employeeId: userId,
+      date: {
+        $gte: startDate,
+      },
+    }).sort({ date: 1 });
+
+    const chartData = generateChart(attendance, filter);
+
+    return res.status(200).json({
+      success: true,
+      chartData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

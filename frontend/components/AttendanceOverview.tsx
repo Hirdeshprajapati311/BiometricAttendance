@@ -24,23 +24,24 @@ const StatusBadge = ({ status }: { status: string }) => {
 }
 
 const AttendanceOverview = () => {
-  const [activeFilter, setActiveFilter] = useState("All")
+  const filter = [{ label: "All", value: "all" }, { label: "Present", value: "present" }, { label: "Half Day", value: "half_day" }, { label: "Absent", value: "absent" }]
+  const [activeFilter, setActiveFilter] = useState<string>("all")
   const [page, setPage] = useState(1)
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0])
+  const [date, setDate] = useState("")
 
-  const filter = ["All", "Present", "Half Day", "Absent"]
+
   const dateRef = useRef<HTMLInputElement>(null)
 
-  const { data, isFetching } = useGetMyAttendance(page)
+  const { data, isFetching } = useGetMyAttendance({
+    page,
+    status: activeFilter === "all" ? undefined : activeFilter,
+    date,
+  })
 
   const totalPages = data?.pagination?.totalPages || 1
   const totalRecords = data?.pagination?.total || 0
 
-  const todayDisplay = new Date().toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  })
+
 
   const column = ["Date", "Day", "Check-in", "", "Check-out", "Work hours", "Status"]
 
@@ -87,7 +88,6 @@ const AttendanceOverview = () => {
   };
 
 
-  console.log("Attendance Object", data?.attendance)
 
   return (
     <div className='px-4 pt-8 pb-2 bg-white font-lexend w-full rounded-lg shadow-sm'>
@@ -101,19 +101,29 @@ const AttendanceOverview = () => {
           <div className="flex items-center gap-3 flex-wrap">
             {filter.map((f) => (
               <button
-                key={f}
-                onClick={() => handleFilterChange(f)}
+                key={f.label}
+                onClick={() => handleFilterChange(f.value)}
                 className={`flex items-center gap-1.5 text-xs sm:text-sm cursor-pointer transition-colors`}
               >
-                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${activeFilter === f ? "border-primary" : "border-gray-400"}`}>
-                  {activeFilter === f && (<div className="w-1.5 h-1.5 rounded-full bg-primary" />)}
+                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${activeFilter === f.value ? "border-primary" : "border-gray-400"}`}>
+                  {activeFilter === f.value && (<div className="w-1.5 h-1.5 rounded-full bg-primary" />)}
                 </div>
-                <span className={activeFilter === f ? "text-primary font-medium" : "text-gray-400"}>
-                  {f}
+                <span className={activeFilter === f.value ? "text-primary font-medium" : "text-gray-400"}>
+                  {f.label}
                 </span>
               </button>
             ))}
           </div>
+
+
+          <button onClick={() => {
+            if (date) {
+              setDate("")
+            } else if (activeFilter) {
+              setActiveFilter("all")
+
+            }
+          }} className='rounded-lg text-gray-400 cursor-pointer bg-gray-200 text-sm px-2 p-1'>{date ? "Reset Date" : "Reset status"}</button>
 
           {/* Date Picker */}
           <div className='rounded-lg px-2 bg-gray-200 text-sm text-gray-400 flex gap-2 flex-row items-center justify-center'>
@@ -129,7 +139,11 @@ const AttendanceOverview = () => {
               className='cursor-pointer text-primary'
               onClick={() => dateRef.current?.showPicker()}
             />
-            &nbsp;{todayDisplay}
+            &nbsp;{date ? new Date(date).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            }) : "Select the date"}
           </div>
 
           <button className='p-2 rounded-lg bg-primary text-white font-light text-sm flex flex-row items-center justify-center hover:bg-primary-dark transition-colors'>
