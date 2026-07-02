@@ -2,20 +2,9 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { FaSliders } from "react-icons/fa6"
 import { useState } from "react"
+import { useGetChartEmp } from "@/hooks/useGetChartEmp"
+import { Chart } from "@/services/attendance.api"
 
-const data = [
-  { date: "01 Aug", value: 60 },
-  { date: "02 Aug", value: 75 },
-  { date: "03 Aug", value: 70 },
-  { date: "04 Aug", value: 65 },
-  { date: "07 Aug", value: 91 },
-  { date: "08 Aug", value: 55 },
-  { date: "09 Aug", value: 50 },
-  { date: "10 Aug", value: 45 },
-  { date: "14 Aug", value: 60 },
-  { date: "15 Aug", value: 55 },
-  { date: "16 Aug", value: 65 },
-]
 
 const AttendanceChart = () => {
 
@@ -24,7 +13,14 @@ const AttendanceChart = () => {
   const [active, setActive] = useState("Daily")
   const filter = ["Daily", "Weekly", "Monthly"]
 
+
+  const { data: chartData = [], isLoading } = useGetChartEmp(active.toLowerCase() as Chart["filter"])
+
+  const graphData = chartData?.chartData ?? []
+
+
   return (
+
     <div className="bg-white text-xs sm:text-sm md:text-base rounded-lg shadow-md p-4">
       <div className="flex flex-col gap-2 md:flex-row justify-between items-center mb-4">
         <h3 className="font-semibold ">Attendance Comparison Chart</h3>
@@ -54,7 +50,7 @@ const AttendanceChart = () => {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={data}>
+        <AreaChart data={graphData}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#3B5BDB" stopOpacity={0.2} />
@@ -63,8 +59,8 @@ const AttendanceChart = () => {
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-          <YAxis tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} />
-          <Tooltip formatter={(v) => `${v}%`} />
+          <YAxis allowDecimals={false} tickFormatter={(v) => `${v.toFixed(1)}h`} tick={{ fontSize: 11 }} />
+          <Tooltip formatter={(v) => `${v}hrs`} />
           <Area
             type="monotone"
             dataKey="value"

@@ -18,6 +18,7 @@ export const ApiRoutes = {
     CHECK_IN: "/api/v1/attendance/checkin",
     CHECKED_IN: "/api/v1/attendance/status",
     CHECK_OUT: "/api/v1/attendance/checkout",
+    CHART: "/api/v1/attendance/chart",
   },
 
   LEAVE_REQ: {

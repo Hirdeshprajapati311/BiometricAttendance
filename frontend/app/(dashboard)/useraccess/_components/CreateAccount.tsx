@@ -59,12 +59,11 @@ const CreateAccount = ({ selectedUser, isCreating, onSuccess, onCancel }: Create
     if (isCreateSuccess || isUpdateSuccess) {
       reset();
       if (onSuccess) {
-        onSuccess
+        onSuccess();
       }
     }
   }, [isCreateSuccess, isUpdateSuccess, reset, onSuccess])
 
-  // ✅ Populate form when user is selected
   useEffect(() => {
     if (selectedUser) {
       setValue('name', selectedUser.name);
@@ -73,7 +72,6 @@ const CreateAccount = ({ selectedUser, isCreating, onSuccess, onCancel }: Create
       setValue('role', selectedUser.role);
       setValue('department', selectedUser.department);
       setValue('designation', selectedUser.designation);
-      // Don't set password for updates
     } else if (isCreating) {
       reset(); // Reset form for new user
     }
@@ -81,14 +79,12 @@ const CreateAccount = ({ selectedUser, isCreating, onSuccess, onCancel }: Create
 
   const onSubmit = (data: CreateAccountData) => {
     if (selectedUser) {
-      // ✅ Update existing user
-      const { password, ...updateData } = data; // Remove password if not needed
+      const { password, ...updateData } = data;
       updateUser({
         id: selectedUser._id,
         data: updateData
       });
     } else {
-      // ✅ Create new user
       createUser(data);
     }
   };
