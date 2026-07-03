@@ -2,9 +2,13 @@
 import { RxAvatar } from 'react-icons/rx';
 import { IoIosWarning } from "react-icons/io";
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 const EMPCard = () => {
   const user = useSelector((state: any) => state.auth.user)
+
+
+  const [selecteEmp, setSelectedEmp] = useState("")
 
   if (!user) {
     return null;
@@ -13,12 +17,17 @@ const EMPCard = () => {
     <div className='p-4 gap-2 font-lexend text-xs bg-white rounded-lg flex flex-col border border-gray-200'>
 
 
-      <div className='flex items-center  flex-row gap-2'>
-        <RxAvatar size={35} />
-        <div className='flex flex-col'>
-          <span>Priya Patel</span>
-          <p className='text-gray-600'>Emp-1102</p>
+      <div className='flex flex-row items-center justify-between'>
+        <div className='flex items-center  flex-row gap-2'>
+          <RxAvatar size={35} />
+          <div className='flex flex-col'>
+            <span>Priya Patel</span>
+            <p className='text-gray-600'>Emp-1102</p>
+          </div>
         </div>
+
+        <input value={selecteEmp} onChange={(e) => setSelectedEmp(e.target.value)} className='h-6 w-6' type='radio'></input>
+
       </div>
 
       {user.role === "admin" && (
