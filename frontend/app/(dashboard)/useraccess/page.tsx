@@ -1,6 +1,6 @@
 "use client";
 import EmpAccCard from '@/components/cards/EmpAccCard';
-import CreateAccount from '@/app/(dashboard)/useraccess/_components/CreateAccount';
+import CreateAccount from '@/app/(dashboard)/useraccess/CreateAccount';
 import { useGetAllEmployees } from '@/hooks/useGetAllEMPs';
 import { Search, X } from 'lucide-react';
 import { useMemo, useState } from 'react';

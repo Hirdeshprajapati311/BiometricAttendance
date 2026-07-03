@@ -1,8 +1,7 @@
 "use client"
 import { useGetMyAttendance } from '@/hooks/useGetMyAttendance';
-import { log } from 'console';
 import { Calendar } from 'lucide-react';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { FaSliders } from "react-icons/fa6"
 
 const statusStyles: Record<string, string> = {
@@ -10,15 +9,19 @@ const statusStyles: Record<string, string> = {
   'absent': 'bg-red-100 text-red-500',
   'late_arrival': 'bg-yellow-100 text-yellow-600',
   'work_from_home': 'bg-gray-100 text-gray-400',
-  'present': 'bg-green-100 text-green-600',
-  'half_day': 'bg-orange-100 text-orange-600',
+  'present': 'bg-success/10 text-success',
+  'half_day': 'bg-warning/10 text-warning',
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
   console.log("Status:", JSON.stringify(status))
+  console.log({
+    status,
+    style: statusStyles[status],
+  });
   return (
     <span className={`px-2 py-1 rounded-md text-xs w-fit ${statusStyles[status] ?? 'bg-gray-100 text-gray-500'}`}>
-      {status}
+      {status ? status.replace("_", "") : "---"}
     </span>
   )
 }
@@ -90,7 +93,7 @@ const AttendanceOverview = () => {
 
 
   return (
-    <div className='px-4 pt-8 pb-2 bg-white font-lexend w-full rounded-lg shadow-sm'>
+    <div className='px-4 pt-8 pb-2 h-[calc(100vh-100px)] bg-white font-lexend w-full rounded-lg shadow-sm'>
 
       {/* Upper section for List */}
       <div className='flex flex-row items-center justify-between flex-wrap gap-4'>

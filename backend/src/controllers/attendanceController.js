@@ -63,6 +63,8 @@ export const getMyAttendance = async (req, res) => {
  */
 
 export const checkIn = async (req, res) => {
+  OFFICE_START_HOUR = 9;
+  OFFICE_START_MINUTE = 15;
   try {
     const { userId } = req.user;
 
@@ -89,13 +91,23 @@ export const checkIn = async (req, res) => {
         });
       }
 
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+
+      const isPastCutoff =
+        currentHour > OFFICE_START_HOUR ||
+        (currentHour === OFFICE_START_HOUR &&
+          currentMinute > OFFICE_START_MINUTE);
+
+      const calculatedStatus = isPastCutoff ? "late_arrival" : "present";
+
       await Attendance.create({
         employeeId: user._id,
         date: today,
         day,
         checkIn: now,
         checkedIn: true,
-        status: "present",
+        status: calculatedStatus,
       });
 
       return res.status(200).json({

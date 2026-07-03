@@ -23,5 +23,7 @@ export const ApiRoutes = {
 
   LEAVE_REQ: {
     BALANCE: "/api/v1/leave-request/balance",
+    CREATE: "/api/v1/leave-request/create",
+    EMPLOYEE:"/api/v1/leave-request/me"
   },
 };
