@@ -104,22 +104,22 @@ export const createLeaveRequest = async (req, res) => {
 
 export const getMyLeaveRequest = async (req, res) => {
   try {
-    const { filter, search } = req.query;
+    const { filter } = req.query;
 
-    let query = {};
+    let query = {
+      employeeId: req.user.userId,
+    };
 
-    if (filter === "pending" || filter === "approved" || filter === "reject") {
-      query.status = filter;
+    if (
+      filter === "pending" ||
+      filter === "approved" ||
+      filter === "rejected" ||
+      filter === "withdrawn"
+    ) {
+      query.status = filter.toLowerCase();
     }
 
-    if (search) {
-      query.$or = [
-        { empId: { $regex: search, $options: "i" } },
-        { employeeName: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    const leaves = await Leave.find(query);
+    const leaves = await Leave.find(query).sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
@@ -129,6 +129,49 @@ export const getMyLeaveRequest = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/v1/leave-request
+ * Admin Route
+ */
+
+export const getLeaves = async (req, res) => {
+  try {
+    const { filter, search } = req.query;
+
+    let query = {};
+
+    if (
+      filter === "pending" ||
+      filter === "approved" ||
+      filter === "rejected" ||
+      filter === "withdrawn"
+    ) {
+      query.status = filter.toLowerCase();
+    }
+
+    if (search) {
+      query.$or = [
+        { empId: { $regex: search, $options: "i" } },
+        { employeeName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const leaves = await Leave.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: leaves.length,
+      leaves,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server error",
       error: error.message,
     });
   }

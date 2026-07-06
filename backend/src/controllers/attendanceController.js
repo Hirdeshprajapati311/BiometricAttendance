@@ -2,6 +2,67 @@ import Attendance from "../model/Attendance.model.js";
 import User from "../model/User.model.js";
 import calculateWorkHours from "../utils/calculateWorkHours.js";
 import generateChart from "../utils/generateChart.js";
+import { isWeekend } from "../utils/isWeekend.js";
+
+/**
+ * GET /api/v1/attendance
+ * Admin
+ */
+
+export const getAttendance = async (req, res) => {
+  try {
+    console.log(req.query);
+
+    const { page, status, date } = req.query;
+
+    const usepage = parseInt(page) || 1;
+    const limit = 8;
+    const skip = (usepage - 1) * limit;
+
+    const query = {};
+    console.log(query);
+
+    if (status && status !== "all") {
+      query.status = status;
+    }
+
+    if (date) {
+      const [year, month, day] = date.split("-").map(Number);
+      const startOfDay = new Date(year, month - 1, day);
+      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+      query.date = {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      };
+    }
+
+    const total = await Attendance.countDocuments(query);
+
+    const attendance = await Attendance.find(query)
+      .populate("employeeId", "name empId")
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      attendance,
+      pagination: {
+        total,
+        page,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 /**
  * GET /api/v1/attendance/me
  */
@@ -63,14 +124,21 @@ export const getMyAttendance = async (req, res) => {
  */
 
 export const checkIn = async (req, res) => {
-  OFFICE_START_HOUR = 9;
-  OFFICE_START_MINUTE = 15;
+  const OFFICE_START_HOUR = 9;
+  const OFFICE_START_MINUTE = 15;
   try {
     const { userId } = req.user;
 
     const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    if (isWeekend(today)) {
+      return res.status(400).json({
+        success: false,
+        message: "Check-in is not allowed on weekends.",
+      });
+    }
 
     const attendance = await Attendance.findOne({
       employeeId: userId,

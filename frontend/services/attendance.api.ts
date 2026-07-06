@@ -1,10 +1,17 @@
 import { ApiRoutes } from "@/utils/apiRoutes";
 import { axiosInstance } from "@/utils/axiosInstance";
 
+interface EmployeeId {
+  _id: string;
+  empId?: string;
+  name?: string;
+}
+
 export interface Attendance {
   _id: string;
-  employeeId: string;
+  employeeId: EmployeeId;
   date: string;
+
   day: string;
   checkIn: string | null;
   checkOut: string | null;
@@ -73,5 +80,22 @@ export const chartApi = async (filter: Chart["filter"]) => {
       filter,
     },
   });
+  return data;
+};
+
+export const getAttendanceApi = async ({
+  page = 1,
+  status,
+  date,
+}: AttendanceFilter): Promise<GetMyAttendanceResponse> => {
+  const { data } = await axiosInstance.get(ApiRoutes.ATTENDANCE.ADMIN, {
+    params: {
+      page,
+      status,
+      date,
+    },
+  });
+
+  console.log("Response:", data);
   return data;
 };

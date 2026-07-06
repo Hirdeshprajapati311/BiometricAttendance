@@ -17,22 +17,7 @@ import AttendanceOverview from "@/components/AttendanceOverview";
 import { useGetLeaveBalance } from "@/hooks/useGetLeaveBalance";
 
 
-const data = [
 
-
-
-  { label: "Casual leave", used: 4, total: 7 },
-  { label: "Sick leave", used: 4, total: 7 },
-  { label: "Earned leave", used: 4, total: 7 },
-
-  { label: "Adjustment leave", used: 4, total: 7 },
-
-  { label: "Upaid leave", used: 4, total: 7 },
-
-  { label: "Half leave", used: 4, total: 7 },
-
-
-]
 
 
 const page = () => {

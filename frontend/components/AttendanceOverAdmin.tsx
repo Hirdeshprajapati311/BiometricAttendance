@@ -1,68 +1,100 @@
 
 
 "use client"
+import { useGetAttendance } from '@/hooks/useGetAttendance';
 import { Calendar } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaSliders } from "react-icons/fa6"
 
-const ITEMS_PER_PAGE = 8
 
-const mockData = [
-  { empId: "EMP-12", empName: "Hirdesh Prajapati", date: '29 July 2023', day: 'Monday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Work from office' },
-  { empId: "EMP-14", empName: "Syarn Prajapati", date: '29 July 2023', day: 'Saturday', checkIn: '00:00', checkOut: '00:00', workHours: '0m', status: 'Absent' },
-  { empId: "EMP-52", empName: "Avnath Prajapati", date: '29 July 2023', day: 'Saturday', checkIn: '10:30', checkOut: '18:00', workHours: '8h 30m', status: 'Late arrival' },
-  { empId: "EMP-11", empName: "Rajesh Prajapati", date: '29 July 2023', day: 'Thursday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 5m', status: 'Work from home' },
-  { empId: "EMP-17", empName: "Sneha Prajapati", date: '29 July 2023', day: 'Saturday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Work from office' },
-  { empId: "EMP-19", empName: "Raju Zore", date: '29 July 2023', day: 'Saturday', checkIn: '9:00', checkOut: '18:00', workHours: '10h 12m', status: 'Work from office' },
-  { empId: "EMP-29", empName: "Nitin Sutar", date: '29 July 2023', day: 'Monday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Work from office' },
-  { empId: "EMP-24", empName: "Nilesh Verma", date: '29 July 2023', day: 'Friday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Present' },
-  { empId: "EMP-47", empName: "Ashwini Zore", date: '29 July 2023', day: 'Wednesday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Work from office' },
-  { empId: "EMP-33", empName: "Avinya Prajapati", date: '29 July 2023', day: 'Tuesday', checkIn: '09:00', checkOut: '18:00', workHours: '10h 2m', status: 'Late arrival' },
-]
 
 const statusStyles: Record<string, string> = {
-  'Work from office': 'bg-gray-100 text-gray-500',
-  'Absent': 'bg-red-100 text-red-500',
-  'Late arrival': 'bg-yellow-100 text-yellow-600',
-  'Work from home': 'bg-gray-100 text-gray-400',
+  'work_from_office': 'bg-gray-100 text-gray-500',
+  'absent': 'bg-red-100 text-red-500',
+  'late_arrival': 'bg-yellow-100 text-yellow-600',
+  'work_from_home': 'bg-gray-100 text-gray-400',
+  'present': 'bg-success/10 text-success',
+  'half_day': 'bg-warning/10 text-warning',
 }
 
-const StatusBadge = ({ status }: { status: string }) => (
-  <span className={`px-2 py-1 rounded-md text-[10px] w-fit ${statusStyles[status] ?? 'bg-gray-100 text-gray-500'}`}>
-    {status}
-  </span>
-)
+const StatusBadge = ({ status }: { status: string }) => {
+  console.log("Status:", JSON.stringify(status))
+  console.log({
+    status,
+    style: statusStyles[status],
+  });
+  return (
+    <span className={`px-2 py-1 rounded-md text-xs w-fit ${statusStyles[status] ?? 'bg-gray-100 text-gray-500'}`}>
+      {status ? status.replace("_", "") : "---"}
+    </span>
+  )
+}
 
 const AttendanceOverAdmin = () => {
 
-  const [active, setActive] = useState("All")
-  const filter = ["All", "Present", "Half Day", "Absent"]
+  const [active, setActive] = useState("all")
+  const filter = [{ label: "All", value: "all" }, { label: "Present", value: "present" }, { label: "Half Day", value: "half_day" }, { label: "Absent", value: "absent" }]
 
 
   const dateRef = useRef<HTMLInputElement>(null)
 
-  const [selectedDate, setSelectedDate] = useState("");
-  const [todayDisplay, setTodayDisplay] = useState("")
 
   const [page, setPage] = useState(1)
-  const totalPages = 100
+  const [date, setDate] = useState("")
+  const { data, isFetching } = useGetAttendance({ page, status: active === "all" ? undefined : active, date })
 
 
-  const column = ["EMP-ID", "Name", "Date", "Day", "Check-in", "Check-out", "Work hours", "Status"]
+  const totalPages = data?.pagination?.totalPages || 1
+  const totalRecords = data?.pagination?.total || 0
+
+
+  const column = ["EMP-ID", "Name", "Date", "Day", "Check-in", "", "Check-out", "Work hours", "Status"]
+
+
+  const handleFilterChange = (filter: string) => {
+    setActive(filter);
+    setPage(1); // Reset to first page when filter changes
+  };
 
 
 
-  useEffect(() => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
 
-    const today = new Date()
-    const formattedDate = today.toISOString().split("T")[0]
-    const formattedDisplay = today.toLocaleDateString("en-GB", {
-      day: "numeric", month: "long", year: "numeric"
-    })
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (page <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (page >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = page - 1; i <= page + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
 
-    setSelectedDate(formattedDate)
-    setTodayDisplay(formattedDisplay)
-  }, [])
+    return pages;
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+
+  console.log("Admin Attendance:", data)
 
   return (
     <div className='px-4 pt-8 pb-2 bg-white font-lexend w-full rounded-lg'>
@@ -80,27 +112,41 @@ const AttendanceOverAdmin = () => {
           <div className="flex items-center gap-3">
             {filter.map((f) => (
               <button
-                key={f}
-                onClick={() => setActive(f)}
+                key={f.label}
+                onClick={() => handleFilterChange(f.value)}
                 className={`flex items-center gap-1.5  text-xs sm:text-sm  cursor-pointer`}
               >
-                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${active === f ? "border-primary" : "border-gray-400"}`}>
-                  {active === f && (<div className="w-1.5 h-1.5 rounded-full bg-primary" />)}
+                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${active === f.value ? "border-primary" : "border-gray-400"}`}>
+                  {active === f.value && (<div className="w-1.5 h-1.5 rounded-full bg-primary" />)}
                 </div>
-                <span className={active === f ? "text-primary font-medium" : "text-gray-400"}>
-                  {f}
+                <span className={active === f.value ? "text-primary font-medium" : "text-gray-400"}>
+                  {f.label}
                 </span>
 
               </button>
             ))}
           </div>
 
+          <button onClick={() => {
+            if (date) {
+              setDate("")
+            } else if (active) {
+              setActive("all")
+
+            }
+          }} className='rounded-lg text-gray-400 cursor-pointer bg-gray-200 text-sm px-2 p-1'>{date ? "Reset Date" : "Reset status"}</button>
+
           <div className='rounded-lg px-2 bg-gray-200 text-sm text-gray-400 flex gap-2 flex-row items-center justify-center'>
             <input
               ref={dateRef} type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className='w-0 opacity-0 absolute' /><Calendar size={14} className='cursor-pointer text-primary' onClick={() => dateRef.current?.showPicker()} />&nbsp;{todayDisplay}</div>
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className='w-0 opacity-0 absolute' />
+            <Calendar size={14} className='cursor-pointer text-primary' onClick={() => dateRef.current?.showPicker()} />&nbsp;{date ? new Date(date).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            }) : "Select the date"}</div>
 
           <button className='p-2 rounded-lg bg-primary text-white font-light text-sm flex flex-row items-center justify-center'><FaSliders />&nbsp; View Attendance</button>
         </div>
@@ -109,70 +155,119 @@ const AttendanceOverAdmin = () => {
       <div className='w-full h-0.5 bg-gray-200 mt-4 rounded-lg'></div>
 
       {/* Header for list*/}
-      <div className='grid grid-cols-8 text-gray-400 text-xs px-4 py-2 mt-2'>
-        {column.map(col => <span key={col}>{col}</span>)}
+      <div className='grid grid-cols-9 text-gray-400 text-xs px-4 py-2 mt-2'>
+        {column.map((col, index) => (
+          <span key={index} className={col === "" ? "hidden md:block" : ""}>
+            {col}
+          </span>
+        ))}
       </div>
 
       <div className='w-full h-0.5 bg-gray-200 mt-2 rounded-lg'></div>
 
 
+      {/*  Loading State */}
+      {isFetching && (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      )}
+
       {/* Rows */}
-      {mockData.map((row, i) => (
-        <div key={i} className='grid grid-cols-8 px-4 py-3 border-b text-xs border-gray-100 hover:bg:gray-50 items-center'>
-          <span className='text-gray-500'>{row.empId}</span>
-          <span className='text-gray-500'>{row.empName.split(" ")[0]}</span>
-          <span className='text-gray-500'>{row.date}</span>
+      {!isFetching && data?.attendance?.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          No attendance records found
+        </div>
+      )}
+
+
+
+      {/* Rows */}
+      {!isFetching && data?.attendance?.map((row) => (
+        <div key={row._id} className='grid grid-cols-9 px-4 py-3 border-b text-xs border-gray-100 hover:bg-gray-50 items-center'>
+          <span className='text-gray-500'>{row.employeeId?.empId}</span>
+          <span className='text-gray-500'>{row.employeeId?.name ? row.employeeId?.name.split(" ")[0] : "-"}</span>
+          <span className='text-gray-500'>
+            {row.date ? new Date(row.date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit"
+            }) : "---"}
+          </span>
           <span className='text-blue-500'>{row.day}</span>
-          <span className='text-blue-600 font-medium'>{row.checkIn}</span>
-
-          <span className='text-blue-600 font-medium'>{row.checkOut}</span>
-          <span className='font-medium'>{row.workHours}</span>
-
+          <span className='text-blue-600 font-medium'>
+            {row.checkIn ? new Date(row.checkIn).toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            }) : "---"}
+          </span>
+          <div className='flex items-center'>
+            <div className='w-16 border-t-3 border-dashed border-gray-300'></div>
+          </div>
+          <span className='text-blue-600 font-medium'>
+            {row.checkOut ? new Date(row.checkOut).toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            }) : "---"}
+          </span>
+          <span className='font-medium'>{row.workHours || "---"}</span>
           <StatusBadge status={row.status} />
-
-
         </div>
       ))}
 
 
 
 
-      {/* footer Paginator */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 text-sm text-gray-500">
-        <span>Page {page} of {totalPages}</span>
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 py-1 rounded-md border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
-          >
-            ‹
-          </button>
 
-          {/* page number pills */}
-          {[...Array(totalPages)].slice(page - 1, page + 2).map((_, i) => {
-            const p = page - 1 + i + 1
-            return (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`px-3 py-1 rounded-md border text-sm ${p === page ? 'bg-primary text-white border-primary' : 'border-gray-200 hover:bg-gray-50'}`}
-              >
-                {p}
-              </button>
-            )
-          })}
+      {/* Footer Paginator */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 text-sm text-gray-500 flex-wrap gap-2">
+          <span>
+            Page {page} of {totalPages}
+            {totalRecords > 0 && ` (${totalRecords} total records)`}
+          </span>
 
-          <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="px-3 py-1 rounded-md border border-gray-200 disabled:opacity-40 hover:bg-gray-50"
-          >
-            ›
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1 || isFetching}
+              className="px-3 py-1 rounded-md border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              ‹
+            </button>
+
+            {/* Page numbers */}
+            {getPageNumbers().map((p, index) => (
+              p === '...' ? (
+                <span key={`ellipsis-${index}`} className="px-2 text-gray-400">…</span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => handlePageChange(p as number)}
+                  disabled={isFetching}
+                  className={`px-3 py-1 rounded-md border text-sm transition-colors ${p === page
+                    ? 'bg-primary text-white border-primary'
+                    : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                >
+                  {p}
+                </button>
+              )
+            ))}
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages || isFetching}
+              className="px-3 py-1 rounded-md border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              ›
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
     </div>
   );

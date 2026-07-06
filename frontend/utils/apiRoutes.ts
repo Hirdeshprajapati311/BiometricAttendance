@@ -21,9 +21,14 @@ export const ApiRoutes = {
     CHART: "/api/v1/attendance/chart",
   },
 
+  DASHBOARD: {
+    ADMIN: "/api/v1/dashboard/summary",
+  },
+
   LEAVE_REQ: {
     BALANCE: "/api/v1/leave-request/balance",
     CREATE: "/api/v1/leave-request/create",
-    EMPLOYEE:"/api/v1/leave-request/me"
+    EMPLOYEE: "/api/v1/leave-request/me",
+    ADMIN: "/api/v1/leave-request",
   },
 };

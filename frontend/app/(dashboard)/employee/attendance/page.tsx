@@ -17,7 +17,7 @@ const page = () => {
       className="flex flex-col  w-full">
       <div className="flex flex-col w-full p-4 bg-white rounded-lg shadow-sm">
         <div className="font-lexend flex flex-row items-center justify-between">
-          <span>Attendance for {new Date(isCheckedIn?.attendance.date).toLocaleDateString("en-GB", {
+          <span>Attendance for {new Date(isCheckedIn?.attendance?.date).toLocaleDateString("en-GB", {
             day: "numeric",
             month: "long",
             year: "numeric"
@@ -59,7 +59,7 @@ const page = () => {
               <div>
                 <div className='flex flex-col '>
                   <span className=''>Checked-in</span>
-                  <p className='text-xs text-gray-500'>Checkek-in at {new Date(isCheckedIn?.attendance.checkIn).toLocaleTimeString("en-US", {
+                  <p className='text-xs text-gray-500'>Checkek-in at {new Date(isCheckedIn?.attendance?.checkIn).toLocaleTimeString("en-US", {
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
