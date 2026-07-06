@@ -51,3 +51,8 @@ export const updateApi = async (id: string, data: UpdateUserTypes) => {
   const response = await axiosInstance.patch(ApiRoutes.USER.UPDATE(id), data);
   return response.data;
 };
+
+export const dashboardApi = async () => {
+  const { data } = await axiosInstance.get(ApiRoutes.DASHBOARD.ADMIN);
+  return data;
+};

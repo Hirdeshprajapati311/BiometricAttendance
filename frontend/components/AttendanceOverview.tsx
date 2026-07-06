@@ -21,7 +21,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   });
   return (
     <span className={`px-2 py-1 rounded-md text-xs w-fit ${statusStyles[status] ?? 'bg-gray-100 text-gray-500'}`}>
-      {status ? status.replace("_", "") : "---"}
+      {status ? status.replace("_", " ") : "---"}
     </span>
   )
 }

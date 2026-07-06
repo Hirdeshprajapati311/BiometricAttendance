@@ -3,12 +3,16 @@ import { RxAvatar } from 'react-icons/rx';
 import { FaCircleCheck } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa";
 import { useSelector } from 'react-redux';
+import { LeaveData } from './EmployeeLeaveRequest';
 
-const LeaveReqDetails = () => {
+const LeaveReqDetails = ({ userData }: { userData: LeaveData }) => {
   const user = useSelector((state: any) => state.auth.user)
   if (!user) {
     return null;
   }
+
+
+
   return (
     <div className='w-full bg-white font-lexend text-sm shadow-lg rounded-lg'>
 
@@ -19,16 +23,20 @@ const LeaveReqDetails = () => {
           <div className='flex flex-row items-center gap-2'>
             <RxAvatar size={60} />
             <div className='flex flex-col'>
-              <span className='font-bold '>Priya Patel</span>
-              <p>UI/UX Designer</p>
-              <p>EMP-1102</p>
+              <span className='font-bold '>{userData?.employeeName}</span>
+              <p>{userData?.designation}</p>
+              <p>{userData?.empId}</p>
 
             </div>
           </div>
 
           <div className='flex flex-col '>
             <p className='font-extralight text-gray-400'>Submitted by:</p>
-            <p className='font-light'>17th Nov 2023</p>
+            <p className='font-light'>{userData?.createdAt ? new Date(userData?.createdAt).toLocaleString("en-IN", {
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            }) : "N/A"}</p>
           </div>
         </div>
 
@@ -49,21 +57,27 @@ const LeaveReqDetails = () => {
         {/* Type of Leave card*/}
         <div className='flex flex-col p-4 w-1/3 rounded-lg bg-gray-100 '>
           <label className='text-gray-500' htmlFor="">Type of Leave</label>
-          <span>Casual Leave</span>
+          <span>{userData?.leaveType.charAt(0).toUpperCase() + userData?.leaveType.slice(1)} Leave</span>
         </div>
 
 
         {/* Period Card */}
         <div className='flex flex-col p-4 w-1/3 rounded-lg bg-gray-100 '>
           <label className='text-gray-500' htmlFor="">Period</label>
-          <span>20 Nov - 21 Nov</span>
+          <span>{new Date(userData?.startDate).toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short"
+          })} - {new Date(userData?.endDate).toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short"
+          })}</span>
         </div>
 
 
         {/* Duration Card */}
         <div className='flex flex-col p-4 w-1/3 rounded-lg bg-gray-100 '>
           <label className='text-gray-500' htmlFor="">Total Duration</label>
-          <span>2 Days</span>
+          <span>{userData?.totalDays} Days</span>
         </div>
       </div>
 
@@ -72,7 +86,7 @@ const LeaveReqDetails = () => {
 
       <div className='flex flex-col px-6 py-4 bg-background'>
         <span className='text-black'>Reason for Leave</span>
-        <p className='text-gray-500'>Requesting leave to attend my sister's wedding in another city.</p>
+        <p className='text-gray-500'>{userData?.reason}</p>
 
         <div className='w-full mt-4 flex items-center justify-center'>
           <div className='h-0.5 w-full bg-gray-200 ' />
@@ -89,24 +103,37 @@ const LeaveReqDetails = () => {
 
         <div className='flex flex-row gap-3'>
           <div className='flex flex-col items-center mt-1 gap-0.5'>
-            <div className='text-primary'><FaCircleCheck size={12} /></div>
-            <div className='w-0.5 h-6 bg-gray-300' />
-            <div className='text-gray-400'><FaArrowRight size={10} /></div>
-            <div className='w-0.5 h-6 bg-gray-300' />
-            <div className='w-3 h-3 border border-gray-400 rounded-full'></div>
+            {userData?.createdAt && (<div className='text-primary'><FaCircleCheck size={12} /></div>)}
+            {/* <div className='w-0.5 h-6 bg-gray-300' />
+            <div className='text-gray-400'><FaArrowRight size={10} /></div> */}
+            {userData?.status === "approved" && (
+              <>
+                <div className='w-0.5 h-10 bg-gray-300' />
+                <div className='w-3 h-3 border border-gray-400 rounded-full'></div>
+              </>
+            )}
           </div>
 
 
 
           <div className='flex flex-col '>
-            <div className='flex flex-col'>
+            {userData?.createdAt && (<div className='flex flex-col'>
               <span className=''>Submitted</span>
-              <p className='text-xs text-gray-500'>Sub, 17 Nov 3:11 AM</p>
-            </div>
+              <p className='text-xs text-gray-500'>Sub, {new Date(userData?.createdAt).toLocaleString("en-IN", {
+                day: "numeric",
+                month: "short",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              }).replace("am", "AM")
+                .replace("pm", "PM")}</p>
+            </div>)}
 
-            <div className='mt-1'>HR Review</div>
-            <div className='mt-4'>Manager Approval Pending</div>
+            {/* <div className='mt-1'>HR Review</div> */}
+            {userData?.status === "approved" && (
+              <div className='mt-4'>Manager Approval Pending</div>
 
+            )}
           </div>
 
         </div>
@@ -120,7 +147,7 @@ const LeaveReqDetails = () => {
 
 
 
-        {user.role === "admin" && (
+        {user.role === "admin" && userData.status === "pending" && (
           <>
             <input type="text" className='text-gray-500 rounded-lg bg-gray-100 border border-gray-300 p-3 w-full' placeholder='Comments...' />
 
@@ -134,9 +161,33 @@ const LeaveReqDetails = () => {
           </>
         )}
 
+        {user.role === "admin" && userData.status === "approved" && (
+
+          <div className='text-green-500 rounded-lg bg-green-100 border border-green-300 p-3 w-full' >
+            Approved
+          </div>
+        )}
+
+        {user.role === "admin" && userData.status === "withdrawn" && (
+
+          <div className='text-blue-500 rounded-lg bg-blue-100 border border-blue-300 p-3 w-full' >
+            Withdrawn by employee
+          </div>
+        )}
+
+        {user.role === "admin" && userData.status === "rejected" && (
+
+          <div className='text-red-500 rounded-lg bg-red-100 border border-red-300 p-3 w-full' >
+            rejected
+          </div>
+        )}
+
         {user.role === "employee" && (
           <div className='px-6 flex w-full flex-row justify-end py-4'>
-            <button className="p-2  rounded-lg text-primary border border-primary bg-blue-100">Withdraw Request</button>
+            {userData?.status === "pending" && (
+              <button className="p-2 cursor-pointer rounded-lg text-primary border border-primary bg-blue-100">Withdraw Request</button>
+            )}
+
           </div>
         )}
 
@@ -150,7 +201,9 @@ const LeaveReqDetails = () => {
 
 
 
+
     </div>
+
   );
 }
 

@@ -20,3 +20,31 @@ export const createLeaveRequestApi = async (leaveData: LeaveRequestData) => {
   );
   return data;
 };
+
+export interface MyLeaveApi {
+  filter: string;
+}
+
+export const getMyLeavesApi = async ({ filter }: MyLeaveApi) => {
+  const { data } = await axiosInstance.get(ApiRoutes.LEAVE_REQ.EMPLOYEE, {
+    params: {
+      filter,
+    },
+  });
+  return data;
+};
+
+export interface LeavesApi {
+  filter: string;
+  search: string;
+}
+
+export const getLeavesApi = async ({ filter, search }: LeavesApi) => {
+  const { data } = await axiosInstance.get(ApiRoutes.LEAVE_REQ.ADMIN, {
+    params: {
+      filter,
+      search,
+    },
+  });
+  return data;
+};

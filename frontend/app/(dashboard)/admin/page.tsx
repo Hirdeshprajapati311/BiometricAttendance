@@ -1,7 +1,7 @@
 "use client"
 import AdminCard from "@/components/cards/AdminCard"
 import DateCard from "@/components/cards/DateCard"
-import { Users } from 'lucide-react';
+import { Minus, Users } from 'lucide-react';
 import AvgTimeOutlineRoundedIcon from '@iconify-react/material-symbols/avg-time-outline-rounded';
 import WeatherTimeIcon from '@iconify-react/mdi/weather-time';
 import TimeOutIcon from '@iconify-react/pajamas/time-out';
@@ -13,17 +13,87 @@ import { Plus } from "lucide-react";
 import AttendanceGraph from "@/components/charts/AttendanceChart";
 import AttendanceBar from "@/components/charts/WeeklyChart";
 import AttendanceOverAdmin from "@/components/AttendanceOverAdmin";
+import { useGetAdminDashboard } from "@/hooks/useGetAdminDasboard";
+import { useEffect } from "react";
 
-const cardData = [
-  { id: 1, stats: 467, title: "Total Employees", smallIcon: <Plus size={9} />, largeIcon: <Users size={20} className="text-primary" />, content: "2 new employees added" },
-  { id: 2, stats: 360, title: "On Time", smallIcon: <TrendingUp size={9} />, largeIcon: <AvgTimeOutlineRoundedIcon height="1.5em" className="text-primary" />, content: "10% increase from last month" },
-  { id: 3, stats: 30, title: "Absent ", smallIcon: <TrendingDown size={9} />, largeIcon: <WeatherTimeIcon height="1.5em" className="text-primary" />, content: "5% decrease from last month" },
-  { id: 4, stats: 62, title: "Late Arrival", smallIcon: <TrendingDown size={9} />, largeIcon: <TimeOutIcon height="1.3em" className="text-primary" />, content: "8% increase from last month" },
-  { id: 5, stats: 6, title: "Early Departure", smallIcon: <TrendingUp size={9} />, largeIcon: <Moon size={20} className="text-primary" />, content: "3% decrease from last month" },
-  { id: 6, stats: 42, title: "Time Off", smallIcon: <TrendingUp size={9} />, largeIcon: <CalendarClock size={20} className="text-primary" />, content: "15% increase from last month" },
-]
+const cardConfig = [
+  {
+    key: "totalEmployees",
+    title: "Total Employees",
+    largeIcon: <Users size={20} className="text-primary" />,
+  },
+  {
+    key: "onTime",
+    title: "On Time",
+    largeIcon: (
+      <AvgTimeOutlineRoundedIcon
+        height="1.5em"
+        className="text-primary"
+      />
+    ),
+  },
+  {
+    key: "absent",
+    title: "Absent",
+    largeIcon: (
+      <WeatherTimeIcon
+        height="1.5em"
+        className="text-primary"
+      />
+    ),
+  },
+  {
+    key: "lateArrival",
+    title: "Late Arrival",
+    largeIcon: (
+      <TimeOutIcon
+        height="1.3em"
+        className="text-primary"
+      />
+    ),
+  },
+  {
+    key: "earlyDeparture",
+    title: "Early Departure",
+    largeIcon: <Moon size={20} className="text-primary" />,
+  },
+  {
+    key: "timeOffToday",
+    title: "Time Off",
+    largeIcon: <CalendarClock size={20} className="text-primary" />,
+  },
+] as const;
+
 
 const page = () => {
+
+
+  const {
+    data,
+    error,
+    isError,
+    isLoading,
+    isFetching,
+  } = useGetAdminDashboard();
+
+  const dashboard = data?.data
+
+  useEffect(() => {
+    console.log("Dashboard:", dashboard)
+  })
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Something went wrong.</div>;
+  }
+
+
+
+
+
   return (
     <div className="flex flex-col gap-4 md:gap-6 min-h-screen pb-8">
 
@@ -37,16 +107,30 @@ const page = () => {
 
         {/* Regular Cards Grid */}
         <div className="grid  grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 sm:col-span-2 lg:col-span-3 order-2 lg:order-2">
-          {cardData.map((card, index) => (
-            <AdminCard
-              key={index}
-              stats={card.stats}
-              title={card.title}
-              smallIcon={card.smallIcon}
-              largeIcon={card.largeIcon}
-              content={card.content}
-            />
-          ))}
+          {cardConfig.map((card) => {
+            const value = dashboard?.[card.key];
+
+            const smallIcon =
+              value?.trend === "up" ? (
+                <TrendingUp size={9} />
+              ) : value?.trend === "down" ? (
+                <TrendingDown size={9} />
+              ) : (
+                <Minus size={9} />
+              );
+
+            return (
+              <AdminCard
+                key={card.key}
+                stats={value?.count ?? 0}
+                title={card.title}
+                smallIcon={smallIcon}
+                largeIcon={card.largeIcon}
+                content={`${value?.change ?? 0}% ${value?.trend ?? "same"
+                  } from last month`}
+              />
+            );
+          })}
         </div>
       </div>
 

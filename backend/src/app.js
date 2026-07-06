@@ -11,6 +11,7 @@ import {
   adminRouter,
   leaveRouter,
   attendanceRouter,
+  dashboardRouter,
 } from "./routes/routeExports.js";
 import {
   catchUpAutoCheckoutIfMissed,
@@ -32,6 +33,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users/", protect, adminOnly, adminRouter);
 app.use("/api/v1/leave-request", protect, leaveRouter);
 app.use("/api/v1/attendance", protect, attendanceRouter);
+app.use("/api/v1/dashboard", protect,dashboardRouter);
 
 const startServer = async () => {
   await connectDB();
