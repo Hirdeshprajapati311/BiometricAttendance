@@ -12,7 +12,6 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginApi,
     onSuccess: (data) => {
-      console.log("SUCCESS", data);
       dispatch(
         setCredentials({ accessToken: data.accessToken, user: data.user }),
       );
@@ -24,7 +23,6 @@ export const useLogin = () => {
     },
     onError: (error) => {
       toast.error(error.message);
-      console.log(error);
     },
   });
 };

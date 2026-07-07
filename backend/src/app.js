@@ -33,7 +33,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users/", protect, adminOnly, adminRouter);
 app.use("/api/v1/leave-request", protect, leaveRouter);
 app.use("/api/v1/attendance", protect, attendanceRouter);
-app.use("/api/v1/dashboard", protect,dashboardRouter);
+app.use("/api/v1/dashboard", protect, adminOnly, dashboardRouter);
 
 const startServer = async () => {
   await connectDB();

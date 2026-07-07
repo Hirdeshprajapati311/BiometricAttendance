@@ -2,8 +2,7 @@
 import { RxAvatar } from 'react-icons/rx';
 import { IoIosWarning } from "react-icons/io";
 import { useSelector } from 'react-redux';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useGetMyLeaves } from '@/hooks/useGetMyLeave';
+import { Dispatch, SetStateAction } from 'react';
 import { FcApproval } from "react-icons/fc";
 import { FcDisapprove } from "react-icons/fc";
 import { LeaveData } from '../EmployeeLeaveRequest';
@@ -68,7 +67,7 @@ const EMPCard = ({ selectedEmp, leave, setSelectedEmp }: LeaveEMP) => {
       <div className='flex flex-row gap-2 items-center '>
         <span className='text-gray-600'>Status</span>
         <div className='flex flex-row items-center gap-1'>
-          <div className='h-1.5 w-1.5 rounded-full bg-yellow-500' />
+          <div className={`h-1.5 w-1.5 rounded-full ${leave.status === "pending" ? "bg-yellow-500" : leave.status === "approved" ? "bg-green-500" : leave.status === "rejected" ? "bg-red-500" : leave.status === "withdrawn" ? "bg-blue-500" : "bg-amber-900"}`} />
           <div>{leave?.status}</div>
         </div>
       </div>

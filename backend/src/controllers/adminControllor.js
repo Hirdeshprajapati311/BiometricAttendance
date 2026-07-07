@@ -7,7 +7,6 @@ import bycrpt from "bcrypt";
 
 export const createUser = async (req, res) => {
   try {
-    console.log("req.body:", req.body); // add this
     const { name, phone, email, password, role, department, designation } =
       req.body;
     console.log("after destructuring, checking existing user...");
@@ -98,6 +97,7 @@ export const updateUser = async (req, res) => {
       message: "User updated successfully",
     });
   } catch (error) {
+    
     res.status(500).json({
       success: false,
       message: "Internal Server issue",

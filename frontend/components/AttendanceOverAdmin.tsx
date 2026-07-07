@@ -18,11 +18,7 @@ const statusStyles: Record<string, string> = {
 }
 
 const StatusBadge = ({ status }: { status: string }) => {
-  console.log("Status:", JSON.stringify(status))
-  console.log({
-    status,
-    style: statusStyles[status],
-  });
+
   return (
     <span className={`px-2 py-1 rounded-md text-xs w-fit ${statusStyles[status] ?? 'bg-gray-100 text-gray-500'}`}>
       {status ? status.replace("_", "") : "---"}
@@ -94,7 +90,6 @@ const AttendanceOverAdmin = () => {
   };
 
 
-  console.log("Admin Attendance:", data)
 
   return (
     <div className='px-4 pt-8 pb-2 bg-white font-lexend w-full rounded-lg'>

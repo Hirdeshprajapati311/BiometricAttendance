@@ -7,7 +7,7 @@ export const ApiRoutes = {
   },
 
   USER: {
-    CREATE_EMP: "/api/v1/users/ create",
+    CREATE_EMP: "/api/v1/users/create",
     GET_ALL: "/api/v1/users/all",
     UPDATE: (userId: string) => `/api/users/${userId}`,
   },
@@ -23,6 +23,8 @@ export const ApiRoutes = {
 
   DASHBOARD: {
     ADMIN: "/api/v1/dashboard/summary",
+    GRAPHCHART: "/api/v1/dashboard/graphChart",
+    GRAPHBAR: "/api/v1/dashboard/barChart",
   },
 
   LEAVE_REQ: {
@@ -30,5 +32,7 @@ export const ApiRoutes = {
     CREATE: "/api/v1/leave-request/create",
     EMPLOYEE: "/api/v1/leave-request/me",
     ADMIN: "/api/v1/leave-request",
+    APPROVAL: (userId: string) => `/api/v1/leave-request/${userId}`,
+    WITHDRAW: (userId: string) => `/api/v1/leave-request/withdraw/${userId}`,
   },
 };

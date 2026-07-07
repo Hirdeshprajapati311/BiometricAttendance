@@ -48,3 +48,26 @@ export const getLeavesApi = async ({ filter, search }: LeavesApi) => {
   });
   return data;
 };
+
+export const approvalApi = async ({
+  id,
+  status,
+  comment,
+}: {
+  id: string;
+  status: "approved" | "rejected";
+  comment: string;
+}) => {
+  const { data } = await axiosInstance.patch(ApiRoutes.LEAVE_REQ.APPROVAL(id), {
+    status,
+    comment,
+  });
+  return data;
+};
+
+export const withdrawApi = async ({ id }: { id: string }) => {
+  const { data } = await axiosInstance.patch(ApiRoutes.LEAVE_REQ.WITHDRAW(id), {
+    status: "withdrawn",
+  });
+  return data;
+};

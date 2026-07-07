@@ -56,3 +56,21 @@ export const dashboardApi = async () => {
   const { data } = await axiosInstance.get(ApiRoutes.DASHBOARD.ADMIN);
   return data;
 };
+
+export interface Chart {
+  filter: string;
+}
+
+export const graphChartApi = async (filter: Chart["filter"]) => {
+  const { data } = await axiosInstance.get(ApiRoutes.DASHBOARD.GRAPHCHART, {
+    params: {
+      filter,
+    },
+  });
+  return data;
+};
+
+export const barChartApi = async () => {
+  const { data } = await axiosInstance.get(ApiRoutes.DASHBOARD.GRAPHBAR);
+  return data;
+};

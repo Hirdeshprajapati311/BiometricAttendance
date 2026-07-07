@@ -50,7 +50,6 @@ const Header = () => {
   }
 
 
-  console.log("Header user:", user);
 
   return (
     <>
@@ -83,15 +82,44 @@ const Header = () => {
               <FaUserCircle size={30} className="text-gray-500 cursor-pointer" />
 
               {openProfile && (
-                <div onClick={(e) => e.stopPropagation()} ref={modalRef} className="p-4 rounded-lg bg-white absolute top-8 flex items-center justify-center flex-col gap-4">
+                <div
+                  ref={modalRef}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute right-0 top-10 w-72 rounded-xl border border-gray-200 bg-white shadow-xl overflow-hidden z-50"
+                >
+                  {/* Profile Header */}
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 border-b border-gray-100">
+                    <div className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-lg">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
 
-                  <div className="w-30 truncate md:w-36">
-                    <h1 className=" text-xs md:text-sm font-medium">{user.name}</h1>
-                    <p className="text-[0.6rem] md:text-xs text-gray-500">{user.email}</p>
+                    <div className="min-w-0">
+                      <h2 className="font-semibold text-sm truncate">
+                        {user.name}
+                      </h2>
+                      <p className="text-xs text-gray-500 truncate">
+                        {user.email}
+                      </p>
+                    </div>
                   </div>
-                  <button className="flex flex-row cursor-pointer"><Settings />&nbsp;Settings</button>
-                  <button onClick={() => setConfirmDeletePopup((prev) => !prev)} className="flex flex-row bg-red-500 text-white rounded-md cursor-pointer p-1"><LogOut />&nbsp;Logout</button>
 
+                  {/* Menu */}
+                  <div className="p-2">
+                    <button
+                      className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-gray-100 transition"
+                    >
+                      <Settings size={18} />
+                      <span>Settings</span>
+                    </button>
+
+                    <button
+                      onClick={() => setConfirmDeletePopup(true)}
+                      className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+                    >
+                      <LogOut size={18} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
