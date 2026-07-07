@@ -1,7 +1,6 @@
 "use client"
-import React, { useState } from 'react';
+import { useState } from 'react';
 import EMPCard from './cards/EMPCard';
-import { Search, X } from 'lucide-react';
 import LeaveReqDetails from './LeaveReqDetails';
 import { useGetMyLeaves } from '@/hooks/useGetMyLeave';
 import { useSelector } from 'react-redux';
@@ -27,6 +26,8 @@ export interface LeaveData {
   reason: string;
   status: string;
   createdAt?: string;
+  updatedAt?: string;
+  adminComment?: string;
   activity?: Activity[];
 
 
@@ -50,15 +51,14 @@ const EmployeeLeaveRequest = () => {
     (leave) => leave._id === selectedEmp
   );
 
-  console.log(filter)
 
   return (
-    <div className='flex h-[calc(100vh-140px)]  flex-row w-full gap-6'>
+    <div className='flex   flex-row w-full gap-6'>
 
       {/* Leave Applications */}
       <div className='p-6 w-72  rounded-lg border-2 bg-primary/10 border-primary/40 flex flex-col justify-between max-w-sm md:w-full'>
 
-        <div className='flex flex-col gap-4 '>
+        <div className='flex flex-col h-[calc(100vh-140px)] gap-4 '>
           <span className='font-lexend'>My Leave Applications</span>
 
 
@@ -74,7 +74,7 @@ const EmployeeLeaveRequest = () => {
 
           <div className='overflow-y-auto custom-scrollbar flex flex-col gap-2' style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
 
-            <div className="overflow-y-auto custom-scrollbar flex flex-col gap-2">
+            <div className=" flex flex-col gap-2">
               {leaves.length > 0 ? (
                 leaves.map((leave) => (
                   <EMPCard

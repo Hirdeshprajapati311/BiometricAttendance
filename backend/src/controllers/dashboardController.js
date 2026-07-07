@@ -2,6 +2,8 @@ import Attendance from "../model/Attendance.model.js";
 import Leave from "../model/Leave.model.js";
 import User from "../model/User.model.js";
 import { calcluateChange } from "../utils/calculateChange.js";
+import generateAdminChart from "../utils/generateAdminChart.js";
+import generateWeeklyDepartmentChart from "../utils/generateWeeklyChart.js";
 
 /**
  * GET /api/v1/dashboard/summary
@@ -181,6 +183,90 @@ export const dashboardSummary = async (req, res) => {
       data: dashboardData,
     });
   } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/v1/attendance/graphChart
+ */
+
+export const getComparisonAdminChart = async (req, res) => {
+  try {
+    const { filter } = req.query;
+
+    let startDate = new Date();
+
+    switch (filter) {
+      case "daily":
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+      case "weekly":
+        startDate.setDate(startDate.getDate() - 49);
+        break;
+      case "monthly":
+        startDate.setDate(startDate.getDate() - 11);
+        break;
+      default:
+        return res.status(400).json({
+          success: false,
+          message: "Invalid filter",
+        });
+    }
+
+    const attendance = await Attendance.find({
+      date: {
+        $gte: startDate,
+      },
+    }).sort({ date: 1 });
+
+    const chartData = generateAdminChart(attendance, filter);
+
+    return res.status(200).json({
+      success: true,
+      chartData,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/v1/attendance/barChart
+ */
+
+export const getWeeklyAdminChart = async (req, res) => {
+  try {
+    const today = new Date();
+
+    const startOfWeek = new Date(today);
+
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const attendance = await Attendance.find({
+      date: {
+        $gte: startOfWeek,
+      },
+    }).populate("employeeId", "department");
+
+    const chartData = generateWeeklyDepartmentChart(attendance);
+
+    return res.status(200).json({
+      success: true,
+      chartData,
+    });
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

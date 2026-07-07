@@ -96,6 +96,5 @@ export const getAttendanceApi = async ({
     },
   });
 
-  console.log("Response:", data);
   return data;
 };

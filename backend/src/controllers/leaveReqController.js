@@ -104,6 +104,18 @@ export const createLeaveRequest = async (req, res) => {
 
 export const getMyLeaveRequest = async (req, res) => {
   try {
+    await Leave.updateMany(
+      {
+        status: "pending",
+        startDate: { $lt: new Date() },
+      },
+      {
+        $set: {
+          status: "expired",
+        },
+      },
+    );
+
     const { filter } = req.query;
 
     let query = {
@@ -114,7 +126,8 @@ export const getMyLeaveRequest = async (req, res) => {
       filter === "pending" ||
       filter === "approved" ||
       filter === "rejected" ||
-      filter === "withdrawn"
+      filter === "withdrawn" ||
+      filter === "expired"
     ) {
       query.status = filter.toLowerCase();
     }
@@ -141,6 +154,18 @@ export const getMyLeaveRequest = async (req, res) => {
 
 export const getLeaves = async (req, res) => {
   try {
+    await Leave.updateMany(
+      {
+        status: "pending",
+        startDate: { $lt: new Date() },
+      },
+      {
+        $set: {
+          status: "expired",
+        },
+      },
+    );
+
     const { filter, search } = req.query;
 
     let query = {};
@@ -149,7 +174,8 @@ export const getLeaves = async (req, res) => {
       filter === "pending" ||
       filter === "approved" ||
       filter === "rejected" ||
-      filter === "withdrawn"
+      filter === "withdrawn" ||
+      filter === "expired"
     ) {
       query.status = filter.toLowerCase();
     }
@@ -172,6 +198,103 @@ export const getLeaves = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server error",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * PATCH /api/v1/leave-request/:id
+ * Admin Route
+ */
+
+export const updateLeaveRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { comment, status } = req.body;
+
+    const allowedStatus = [
+      "approved",
+      "rejected",
+      "pending",
+      "withdrawn",
+      "expired",
+    ];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    const leaveRequest = await Leave.findById(id);
+
+    if (!leaveRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    leaveRequest.status = status;
+    leaveRequest.adminComment = comment;
+
+    await leaveRequest.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Leave request ${status}`,
+      data: leaveRequest,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * PATCH /api/v1/leave-request/withdraw/:id
+ * Admin Route
+ */
+export const updateStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const leaveRequest = await Leave.findById(id);
+
+    if (!leaveRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    if (leaveRequest.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Only pending leave requests can be withdrawn",
+      });
+    }
+
+    leaveRequest.status = "withdrawn";
+
+    await leaveRequest.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Leave request withdrawn successfully",
+      data: leaveRequest,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
       error: error.message,
     });
   }

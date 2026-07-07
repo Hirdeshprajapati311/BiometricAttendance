@@ -78,9 +78,6 @@ const page = () => {
 
   const dashboard = data?.data
 
-  useEffect(() => {
-    console.log("Dashboard:", dashboard)
-  })
 
   if (isLoading) {
     return <div>Loading...</div>;

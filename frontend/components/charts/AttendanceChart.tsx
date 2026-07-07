@@ -1,9 +1,11 @@
 "use client"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { FaSliders } from "react-icons/fa6"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useGetChartEmp } from "@/hooks/useGetChartEmp"
 import { Chart } from "@/services/attendance.api"
+import { useGetGraphChart } from "@/hooks/useGetGraphChart"
+import { useSelector } from "react-redux"
 
 
 const AttendanceChart = () => {
@@ -13,10 +15,20 @@ const AttendanceChart = () => {
   const [active, setActive] = useState("Daily")
   const filter = ["Daily", "Weekly", "Monthly"]
 
+  const { role } = useSelector((state: any) => state.auth.user)
+
 
   const { data: chartData = [], isLoading } = useGetChartEmp(active.toLowerCase() as Chart["filter"])
 
+  const { data: graphChart = [] } = useGetGraphChart(active.toLowerCase() as Chart["filter"])
+
   const graphData = chartData?.chartData ?? []
+  const adminGraphData = graphChart?.chartData ?? []
+
+
+  const chart =
+    role === "admin" ? adminGraphData : graphData;
+
 
 
   return (
@@ -50,7 +62,7 @@ const AttendanceChart = () => {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={graphData}>
+        <AreaChart data={chart}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#3B5BDB" stopOpacity={0.2} />
