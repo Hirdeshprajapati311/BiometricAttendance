@@ -121,12 +121,21 @@ docs/API.md
 
 Dashboard
 
+<img width="1527" height="680" alt="dashboard" src="https://github.com/user-attachments/assets/630872ae-e301-4f6b-a962-a76ef6898b79" />
+<img width="1536" height="692" alt="EmployeeDashboard" src="https://github.com/user-attachments/assets/9ec74bcc-cea7-4f27-b6f8-6528d4428a83" />
+
 Attendance
+<img width="1527" height="687" alt="attendanceHistory" src="https://github.com/user-attachments/assets/75d6c723-be8c-4a9f-bcc7-5f02b2cd0a0d" />
 
 Leave Management
 
-Employee Management
 
+<img width="1536" height="667" alt="leaveRequest" src="https://github.com/user-attachments/assets/a4c05736-6870-4b89-911f-361d021d767e" />
+<img width="1527" height="632" alt="leaveRequestEmp" src="https://github.com/user-attachments/assets/bc2a3841-610b-4596-b2bd-eb2f8d8fc3d2" />
+
+
+Employee Management
+<img width="1535" height="692" alt="userAccess" src="https://github.com/user-attachments/assets/bb11f7eb-8fe4-4051-9fc5-c93cefd6fdf0" />
 ---
 
 ## Future Scope
