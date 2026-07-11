@@ -4,7 +4,11 @@ import axios from "axios";
 import { ApiRoutes } from "./apiRoutes";
 import { clearCredentials, setCredentials } from "@/store/authSlice";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!BASE_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL is not defined");
+}
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
