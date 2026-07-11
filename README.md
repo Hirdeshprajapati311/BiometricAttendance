@@ -2,6 +2,13 @@
 
 A full-stack attendance management system built with React, Node.js, Express, and MongoDB for managing employee attendance, leave requests, work schedules, and administrative operations.
 
+## Demo Credentials
+
+### Admin
+Email: adminnew@gmail.com
+Password: Admin@123
+
+
 ## Features
 
 ### Authentication
