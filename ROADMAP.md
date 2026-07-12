@@ -23,3 +23,8 @@
 - Forgot Password
 - Multi-tenancy
 - Roles & Permissions
+
+## v3
+
+- Organization build (Employee,HR,TL support for Companies & Teacher,Student for colleges,schools)
+- RAG pipline for students 
