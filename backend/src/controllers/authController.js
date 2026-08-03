@@ -1,65 +1,52 @@
 import User from "../model/User.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
 
 /**
  * POST /api/auth/register
  */
-export const register = async (req, res) => {
-  try {
-    const { name, email, password, organizationName } = req.body;
+export const register = asyncHandler(async (req, res) => {
+  const { name, email, password, organizationName } = req.body;
 
-    const userCount = await User.countDocuments();
+  const userCount = await User.countDocuments();
 
-    if (userCount > 0) {
-      return res.status(403).json({
-        success: false,
-        message: "Organization already exists. Contact your admin",
-      });
-    }
-
-    const hashPassowrd = await bcrypt.hash(password, 10);
-
-    const userData = {
-      email,
-      password: hashPassowrd,
-      name,
-      role: "admin",
-      isRootAdmin: true,
-      organizationName,
-    };
-
-    const user = new User(userData);
-    await user.save();
-
-    return res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      data: user,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: err.message,
-    });
+  if (userCount > 0) {
+    throw new ApiError(403, "Organization already exists. Contact your admin");
   }
-};
+
+  const hashPassowrd = await bcrypt.hash(password, 10);
+
+  const userData = {
+    email,
+    password: hashPassowrd,
+    name,
+    role: "admin",
+    isRootAdmin: true,
+    organizationName,
+  };
+
+  const user = new User(userData);
+  await user.save();
+
+  return res.status(201).json({
+    success: true,
+    message: "User registered successfully",
+    data: user,
+  });
+});
 
 /**
  * POST /api/auth/login
  */
-export const login = async (req, res) => {
-  try {
+export const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     const isExistInDB = await User.findOne({ email }).select("+password");
 
     if (!isExistInDB) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid User",
-      });
+      throw new ApiError(401, "Invalid User");
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -68,10 +55,7 @@ export const login = async (req, res) => {
     );
 
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid Credentials",
-      });
+      throw new ApiError(401, "Invalid Credentials");
     }
 
     const accessToken = jwt.sign(
@@ -108,28 +92,19 @@ export const login = async (req, res) => {
         role: isExistInDB.role,
       },
     });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
+  
+})
 
 /**
  * POST api/auth/refresh-token
  */
 
-export async function refreshToken(req, res) {
-  try {
+export const refreshToken= asyncHandler(async function refreshToken(req, res) {
+  
     const { refreshToken } = req.cookies;
 
     if (!refreshToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid User",
-      });
+      throw new ApiError(401, "Invalid User");
     }
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
@@ -137,10 +112,7 @@ export async function refreshToken(req, res) {
     const user = await User.findById(decoded.userId);
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
+      throw new ApiError(401, "User not found");
     }
 
     const newAccessToken = jwt.sign(
@@ -162,31 +134,17 @@ export async function refreshToken(req, res) {
         email: user.email,
       },
     });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-}
+
+})
 
 /**
  * POST api/auth/logout
  */
 
-export async function logout(req, res) {
-  try {
+export const logout = asyncHandler(async function logout(req, res) {
     res.clearCookie("refreshToken");
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
     });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server error",
-      error: error.message,
-    });
-  }
-}
+});

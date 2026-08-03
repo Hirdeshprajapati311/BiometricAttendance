@@ -17,6 +17,7 @@ import {
   catchUpAutoCheckoutIfMissed,
   startAutoCheckoutJob,
 } from "./jobs/autoCheckout.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,8 @@ app.use("/api/v1/users/", protect, adminOnly, adminRouter);
 app.use("/api/v1/leave-request", protect, leaveRouter);
 app.use("/api/v1/attendance", protect, attendanceRouter);
 app.use("/api/v1/dashboard", protect, adminOnly, dashboardRouter);
+
+app.use(errorHandler);
 
 const startServer = async () => {
   await connectDB();
