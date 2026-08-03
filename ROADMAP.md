@@ -4,8 +4,8 @@
 
 - Bug fixes
 - Responsive improvements
-- Leave validation
-- Error handler middleware
+- Leave validation (done)
+- Error handler middleware (done)
 
 ## v1.2
 
