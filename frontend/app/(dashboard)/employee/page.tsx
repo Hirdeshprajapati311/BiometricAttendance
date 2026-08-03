@@ -27,7 +27,7 @@ const page = () => {
 
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 min-h-screen pb-8">
+    <div className="flex flex-col gap-4 md:gap-6 min-h-screen mb-20 pb-8">
 
       {/* Upper Cards Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
@@ -39,8 +39,8 @@ const page = () => {
 
         {/* Regular Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 sm:col-span-2 lg:col-span-3 order-2 lg:order-2">
-          {/* EmployeeCard */}
 
+          {/* EmployeeCard */}
           {leaveReqData?.leaveBalance && Object.entries(leaveReqData.leaveBalance).map(([key, value]: any) => (
             <EmployeeCard key={key} used={value.used} total={value.total} label={key} />
           ))}

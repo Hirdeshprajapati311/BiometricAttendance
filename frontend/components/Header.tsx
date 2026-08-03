@@ -97,7 +97,7 @@ const Header = () => {
                       <h2 className="font-semibold text-sm truncate">
                         {user.name}
                       </h2>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-gray-500  truncate">
                         {user.email}
                       </p>
                     </div>
@@ -124,7 +124,7 @@ const Header = () => {
               )}
 
             </div>
-            <div className="w-30 truncate md:w-36">
+            <div className="hidden md:block truncate md:w-36">
               <h1 className=" text-xs md:text-sm font-medium">{user.name}</h1>
               <p className="text-[0.6rem] md:text-xs text-gray-500">{user.email}</p>
             </div>

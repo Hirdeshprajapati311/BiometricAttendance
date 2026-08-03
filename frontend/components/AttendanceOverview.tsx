@@ -89,13 +89,13 @@ const AttendanceOverview = () => {
 
 
   return (
-    <div className='px-4 pt-8 pb-2 h-[calc(100vh-100px)] bg-white font-lexend w-full rounded-lg shadow-sm'>
+    <div className='px-4 pt-4  md:pt-8 pb-2  bg-white font-lexend w-full rounded-lg shadow-sm md:mb-4'>
 
       {/* Upper section for List */}
       <div className='flex flex-row items-center justify-between flex-wrap gap-4'>
         <span className='font-light text-gray-600'>Attendance Overview</span>
 
-        <div className='flex flex-row gap-4 flex-wrap'>
+        <div className='flex flex-col md:flex-row gap-4 flex-wrap'>
           {/* Filters */}
           <div className="flex items-center gap-3 flex-wrap">
             {filter.map((f) => (
@@ -125,7 +125,7 @@ const AttendanceOverview = () => {
           }} className='rounded-lg text-gray-400 cursor-pointer bg-gray-200 text-sm px-2 p-1'>{date ? "Reset Date" : "Reset status"}</button>
 
           {/* Date Picker */}
-          <div className='rounded-lg px-2 bg-gray-200 text-sm text-gray-400 flex gap-2 flex-row items-center justify-center'>
+          <div className='rounded-lg px-2 md:py-0 bg-gray-200 text-sm py-2 text-gray-400 flex gap-2 flex-row items-center justify-center'>
             <input
               ref={dateRef}
               type="date"
